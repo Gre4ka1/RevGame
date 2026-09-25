@@ -1,0 +1,12 @@
+package com.example.revgame2.Entities.Buildings;
+
+import com.example.revgame2.ConstantManager;
+import com.example.revgame2.Entities.Hex;
+import com.example.revgame2.Relief;
+import com.example.revgame2.TextureManager;
+
+public class Hangar extends Building{
+    public Hangar(Hex hex) {
+        super(hex, Relief.FIELD,null, ConstantManager.HANGAR_COST, TextureManager.getInstance().getHangarTexture(), TextureManager.getInstance().getHangarTexture());
+    }
+}
