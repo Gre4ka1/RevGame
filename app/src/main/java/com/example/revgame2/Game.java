@@ -24,7 +24,7 @@ public class Game {
     public static int step=0;
     private static Game instance;
     private Random random = new Random();
-    public double scaleKoef = 1;
+    public float scaleKoef = 1;
     public boolean showReputationFlag = false;
     private ArrayList<ConstraintLayout> stateLayoutList = new ArrayList<>();
     public float globalX=0,globalY=0;
@@ -226,6 +226,20 @@ public class Game {
             layout.setVisibility(View.GONE);
         }
     }
+    public float[] getScreenCoordinates(float x, float y){
+        float[] res = new float[2];
+        res[0] = (x+globalX)*scaleKoef;
+        res[1] = (y+globalY)*scaleKoef;
+        return res;
+    }
+
+    public float[] getRealCoordinates(float x,float y){
+        float[] res = new float[2];
+        res[0] = (x/scaleKoef-globalX);
+        res[1] = (y/scaleKoef-globalY);
+        return res;
+    }
+
 
 
     public void updateUI(){

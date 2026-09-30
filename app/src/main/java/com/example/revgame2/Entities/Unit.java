@@ -4,6 +4,8 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 
+import com.example.revgame2.Game;
+
 public class Unit extends Entity{
     public Hex hex;
 
@@ -17,6 +19,6 @@ public class Unit extends Entity{
     }
 
     public void draw(Canvas canvas){
-        canvas.drawBitmap(texture,hex.getX()+hex.globalX,hex.getY()+hex.globalY,paint);
+        canvas.drawBitmap(texture,null, hex.rect,paint);
     }
 }

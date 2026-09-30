@@ -2,8 +2,10 @@ package com.example.revgame2.Entities;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Rect;
 
 import com.example.revgame2.Entities.Buildings.Road;
+import com.example.revgame2.Game;
 import com.example.revgame2.Player;
 import com.example.revgame2.Relief;
 
@@ -19,6 +21,8 @@ public class Squad extends Unit{
     public int speedLost=speed;
     public Player player;
     public int cost;
+    public float[] screenCoords;
+    public float scaleKoef;
     public boolean moveAfterDefeatSquadFlag;
 
     public Squad(Hex hex, Player player, int cost, boolean moveAfterDefeatSquadFlag, Bitmap selectedTexture, Bitmap noSelectedTexture) {
@@ -87,16 +91,18 @@ public class Squad extends Unit{
 
     @Override
     public void draw(Canvas canvas) {
+        screenCoords= Game.getInstance().getScreenCoordinates(hex.getX(),hex.getY());
+        scaleKoef = Game.getInstance().scaleKoef;
         if (Entity.selectedEntity == this) {
-            canvas.drawBitmap(texture, (float) (hex.getX() + Hex.SIZE_X * 0.15) + hex.globalX, (float) (hex.getY() + Hex.SIZE_Y * 0.15)+hex.globalY, paint);
+            canvas.drawBitmap(texture, null, new Rect((int) (screenCoords[0]+hex.SIZE_X*scaleKoef*0.15), (int) (screenCoords[1]+hex.SIZE_Y*scaleKoef*0.15), (int) (screenCoords[0]+hex.SIZE_X*scaleKoef*0.85), (int) (screenCoords[1]+hex.SIZE_Y*scaleKoef*0.85)), paint);
 
         }
         else
-            canvas.drawBitmap(texture, (float) (hex.getX()+Hex.SIZE_X*0.2)+hex.globalX, (float) (hex.getY()+Hex.SIZE_Y*0.2)+hex.globalY,paint);
+            canvas.drawBitmap(texture, null, new Rect((int) (screenCoords[0]+hex.SIZE_X*scaleKoef*0.2), (int) (screenCoords[1]+hex.SIZE_Y*scaleKoef*0.2), (int) (screenCoords[0]+hex.SIZE_X*scaleKoef*0.8), (int) (screenCoords[1]+hex.SIZE_Y*scaleKoef*0.8)),paint);
         drawHP(canvas);
     }
     private void drawHP(Canvas canvas){
-        canvas.drawText(hp+"",(float) (hex.getX() + Hex.SIZE_X * 0.05)+hex.globalX, (float) (hex.getY() + Hex.SIZE_Y * 0.4)+hex.globalY,paint);
+        canvas.drawText(hp+"",(float) (screenCoords[0] + Hex.SIZE_X*scaleKoef * 0.05), (float) (screenCoords[1] + Hex.SIZE_Y*scaleKoef * 0.4),paint);
     }
 
     public void attack(Squad squad) {

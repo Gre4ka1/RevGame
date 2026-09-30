@@ -3,6 +3,8 @@ package com.example.revgame2.Entities;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Rect;
+import android.util.Size;
 
 import com.example.revgame2.ConstantManager;
 import com.example.revgame2.Entities.Buildings.Building;
@@ -21,6 +23,9 @@ public class Hex extends Entity{
     public static ArrayList<Hex> hexes = new ArrayList<>();
     private float x,y;
     public float globalX,globalY;
+    public float screenX,screenY;
+    public float scaleKoef;
+    public Rect rect;
     public HashMap<Player,Integer> reputation = new HashMap<>();
     public static HashMap<Player,Paint> reputationPaints = new HashMap<>();
     public static int SIZE_X;
@@ -49,91 +54,74 @@ public class Hex extends Entity{
 
 
     public void draw(Canvas canvas){
-        globalX=Game.getInstance().globalX;
-        globalY=Game.getInstance().globalY;
-        canvas.drawBitmap(texture, (float) x+globalX, (float) y+globalY,paint);
-        //canvas.drawText(hexScore+"",x+SIZE_X/2,y+SIZE_Y/2,paint);
-        /*switch (relief){
-            case FIELD:
-                canvas.drawBitmap(TextureManager.getInstance().getFieldHexTexture(), (float) x, (float) y,paint);
-                break;
-            case MOUNTAIN:
-                canvas.drawBitmap(TextureManager.getInstance().getMountainHexTexture(), (float) x, (float) y,paint);
-                break;
-            case WATER:
-                canvas.drawBitmap(TextureManager.getInstance().getWaterHexTexture(), (float) x, (float) y,paint);
-                break;
-            case FOREST:
-                canvas.drawBitmap(TextureManager.getInstance().getForestHexTexture(), (float) x, (float) y,paint);
-                break;
-            case SWAMP:
-                canvas.drawBitmap(TextureManager.getInstance().getSwampHexTexture(), (float) x, (float) y,paint);
-                break;
-            default:
-                canvas.drawBitmap(TextureManager.getInstance().getEmptyHexTexture(), (float) x, (float) y,paint);
-        }*/
-        /*if (moveDotHexList.contains(this))
-            drawMoveDot(canvas);
-        if (attackDotHexList.contains(this))
-            drawAttackDot(canvas);*/
+        //globalX=Game.getInstance().globalX;
+        //globalY=Game.getInstance().globalY;
+        float[] screenCoord = Game.getInstance().getScreenCoordinates(x,y);
+        screenX = screenCoord[0];
+        screenY=screenCoord[1];
+        scaleKoef=Game.getInstance().scaleKoef;
+        rect=new Rect((int) screenX, (int) screenY, (int) (screenX+SIZE_X*scaleKoef), (int) (screenY+ SIZE_Y*scaleKoef));
+        canvas.drawBitmap(texture, null, rect,paint);
     }
 
     public void drawMoveDot(Canvas canvas){
-        canvas.drawBitmap(TextureManager.getInstance().getMoveDotTexture(),x+SIZE_X*0.4f+globalX,y+SIZE_Y*0.4f+globalY,paint);
+        //canvas.drawBitmap(TextureManager.getInstance().getMoveDotTexture(),screenX+SIZE_X*Game.getInstance().scaleKoef*0.4f,screenY+SIZE_Y*Game.getInstance().scaleKoef*0.4f,paint);
+        canvas.drawBitmap(TextureManager.getInstance().getMoveDotTexture(),null, new Rect((int) (screenX+SIZE_X*scaleKoef*0.4), (int) (screenY+SIZE_Y*scaleKoef*0.4),
+                (int) (screenX+SIZE_X*scaleKoef*0.6), (int) (screenY+SIZE_Y*scaleKoef*0.6)),paint);
     }
     public void drawAttackDot(Canvas canvas){
-        canvas.drawBitmap(TextureManager.getInstance().getAttackDotTexture(),x+SIZE_X*0.3f+globalX,y+SIZE_Y*0.3f+globalY,paint);
-    }
+        canvas.drawBitmap(TextureManager.getInstance().getMoveDotTexture(),null, new Rect((int) (screenX+SIZE_X*scaleKoef*0.3), (int) (screenY+SIZE_Y*scaleKoef*0.3),
+                (int) (screenX+SIZE_X*scaleKoef*0.7), (int) (screenY+SIZE_Y*scaleKoef*0.7)),paint);    }
     public void drawReputation(Canvas canvas) {
         if (relief==Relief.WATER)
             return;
         for (Player p: Game.getInstance().players){
             switch (p.fraction){
                 case RED:
-                    canvas.drawLine(x+15+globalX,
-                            (float) (y+SIZE_Y*(0.5-0.042*reputation.get(p))),
-                            x+15+globalX,
-                            (float) (y+SIZE_Y*(0.5+0.042*reputation.get(p))),
+                    canvas.drawLine(screenX+15*scaleKoef,
+                            (float) (screenY+SIZE_Y*scaleKoef*(0.5-0.042*reputation.get(p))),
+                            screenX+15*scaleKoef,
+                            (float) (screenY+SIZE_Y*scaleKoef*(0.5+0.042*reputation.get(p))),
                             reputationPaints.get(p));
                     break;
                 case BLUE:
                     canvas.drawLine(
-                            x+SIZE_X-15+globalX,
-                            (float) (y+SIZE_Y*(0.5-0.042*reputation.get(p))),
-                            x+SIZE_X-15+globalX,
-                            (float) (y+SIZE_Y*(0.5+0.042*reputation.get(p))),
+                            screenX+SIZE_X*scaleKoef-15*scaleKoef,
+                            (float) (screenY+SIZE_Y*scaleKoef*(0.5-0.042*reputation.get(p))),
+                            screenX+SIZE_X*scaleKoef-15*scaleKoef,
+                            (float) (screenY+SIZE_Y*scaleKoef*(0.5+0.042*reputation.get(p))),
                             reputationPaints.get(p));
                     break;
                 case YELLOW:
                     canvas.drawLine(
-                            (float) (x+SIZE_X*0.75 - 0.866*SIZE_Y*0.042*reputation.get(p) -7.5)+globalX,
-                            (float) (y+SIZE_Y*0.875 + 0.5*SIZE_Y*0.042*reputation.get(p) - 13)+globalY,
-                            (float) (x+SIZE_X*0.75 + 0.866*SIZE_Y*0.042*reputation.get(p)-7.5)+globalX,
-                            (float) (y+SIZE_Y*0.875 - 0.5*SIZE_Y*0.042*reputation.get(p) -13)+globalY,
+                            (float) (screenX+SIZE_X*scaleKoef*0.75 - 0.866*SIZE_Y*scaleKoef*0.042*reputation.get(p) -7.5*scaleKoef),
+                            (float) (screenY+SIZE_Y*scaleKoef*0.875 + 0.5*SIZE_Y*scaleKoef*0.042*reputation.get(p) - 13*scaleKoef),
+                            (float) (screenX+SIZE_X*scaleKoef*0.75 + 0.866*SIZE_Y*scaleKoef*0.042*reputation.get(p)-7.5*scaleKoef),
+                            (float) (screenY+SIZE_Y*scaleKoef*0.875 - 0.5*SIZE_Y*scaleKoef*0.042*reputation.get(p) -13*scaleKoef),
                             reputationPaints.get(p));     //a=0.5SizeY *0.05     a*cos(30)     a*sin(30)
                     break;
                 case GREEN:
                     canvas.drawLine(
-                            (float) (x+SIZE_X*0.25 - 0.866*SIZE_Y*0.042*reputation.get(p) + 7.5)+globalX,
-                            (float) (y+SIZE_Y*0.125 + 0.5*SIZE_Y*0.042*reputation.get(p) + 13)+globalY,
-                            (float) (x+SIZE_X*0.25 + 0.866*SIZE_Y*0.042*reputation.get(p)+ 7.5)+globalX,
-                            (float) (y+SIZE_Y*0.125 - 0.5*SIZE_Y*0.042*reputation.get(p) + 13)+globalY,
+                            (float) (screenX+SIZE_X*scaleKoef*0.25 - 0.866*SIZE_Y*scaleKoef*0.042*reputation.get(p) + 7.5*scaleKoef),
+                            (float) (screenY+SIZE_Y*scaleKoef*0.125 + 0.5*SIZE_Y*scaleKoef*0.042*reputation.get(p) + 13*scaleKoef),
+                            (float) (screenX+SIZE_X*scaleKoef*0.25 + 0.866*SIZE_Y*scaleKoef*0.042*reputation.get(p)+ 7.5*scaleKoef),
+                            (float) (screenY+SIZE_Y*scaleKoef*0.125 - 0.5*SIZE_Y*scaleKoef*0.042*reputation.get(p) + 13*scaleKoef),
                             reputationPaints.get(p));     //a=0.5SizeY *0.05     a*cos(30)     a*sin(30)
                     break;
                 case BLACK:
                     canvas.drawLine(
-                            (float) (x+SIZE_X*0.25 - 0.866*SIZE_Y*0.042*reputation.get(p) + 7.5)+globalX,
-                            (float) (y+SIZE_Y*0.875 - 0.5*SIZE_Y*0.042*reputation.get(p) - 13)+globalY,
-                            (float) (x+SIZE_X*0.25 + 0.866*SIZE_Y*0.042*reputation.get(p) + 7.5)+globalX,
-                            (float) (y+SIZE_Y*0.875 + 0.5*SIZE_Y*0.042*reputation.get(p) - 13)+globalY,
+                            (float) (screenX+SIZE_X*scaleKoef*0.25 - 0.866*SIZE_Y*scaleKoef*0.042*reputation.get(p) + 7.5*scaleKoef),
+                            (float) (screenY+SIZE_Y*scaleKoef*0.875 - 0.5*SIZE_Y*scaleKoef*0.042*reputation.get(p) - 13*scaleKoef),
+                            (float) (screenX+SIZE_X*scaleKoef*0.25 + 0.866*SIZE_Y*scaleKoef*0.042*reputation.get(p) + 7.5*scaleKoef),
+                            (float) (screenY+SIZE_Y*scaleKoef*0.875 + 0.5*SIZE_Y*scaleKoef*0.042*reputation.get(p) - 13*scaleKoef),
                             reputationPaints.get(p));     //a=0.5SizeY *0.05     a*cos(30)     a*sin(30)
                     break;
                 case WHITE:
                     canvas.drawLine(
-                            (float) (x+SIZE_X*0.75 - 0.866*SIZE_Y*0.042*reputation.get(p) - 7.5)+globalX,
-                            (float) (y+SIZE_Y*0.125 - 0.5*SIZE_Y*0.042*reputation.get(p) + 13)+globalY,
-                            (float) (x+SIZE_X*0.75 + 0.866*SIZE_Y*0.042*reputation.get(p)- 7.5)+globalX,
-                            (float) (y+SIZE_Y*0.125 + 0.5*SIZE_Y*0.042*reputation.get(p) + 13)+globalY,
+                            (float) (screenX+SIZE_X*scaleKoef*0.75 - 0.866*SIZE_Y*scaleKoef*0.042*reputation.get(p) - 7.5*scaleKoef),
+                            (float) (screenY+SIZE_Y*scaleKoef*0.125 - 0.5*SIZE_Y*scaleKoef*0.042*reputation.get(p) + 13*scaleKoef),
+                            (float) (screenX+SIZE_X*scaleKoef*0.75 + 0.866*SIZE_Y*scaleKoef*0.042*reputation.get(p)- 7.5*scaleKoef),
+                            (float) (screenY+SIZE_Y*scaleKoef*0.125 + 0.5*SIZE_Y*scaleKoef*0.042*reputation.get(p) + 13*scaleKoef),
                             reputationPaints.get(p));     //a=0.5SizeY *0.05     a*cos(30)     a*sin(30)
                     break;
             }
@@ -141,15 +129,15 @@ public class Hex extends Entity{
     }
     public void drawBuilding(Canvas canvas){
         if (building!=null)
-            canvas.drawBitmap(building.texture,x+globalX,y+globalY,paint);
+            canvas.drawBitmap(building.texture,null,rect,paint);
     }
 
     public static Hex getClickedHex(float cx, float cy){
         float minDist=1000;
         Hex minDistHex = hexes.get(0);
         for (Hex h:hexes) {
-            if (Math.hypot(h.x+SIZE_X/2 + h.globalX-cx,h.y+SIZE_Y/2 + h.globalY-cy)<minDist){
-                minDist= (float) Math.hypot(h.x+SIZE_X/2 + h.globalX-cx,h.y+SIZE_Y/2 + h.globalY-cy);
+            if (Math.hypot(h.x+SIZE_X/2 - cx,h.y+SIZE_Y/2 - cy)<minDist){
+                minDist= (float) Math.hypot(h.x+SIZE_X/2 - cx,h.y+SIZE_Y/2 - cy);
                 minDistHex=h;
             }
         }
