@@ -3,12 +3,13 @@ package com.example.revgame2.Entities;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Path;
 import android.graphics.Rect;
-import android.util.Size;
 
 import com.example.revgame2.ConstantManager;
 import com.example.revgame2.Entities.Buildings.Building;
 import com.example.revgame2.Entities.Buildings.Road;
+import com.example.revgame2.Fraction;
 import com.example.revgame2.Game;
 import com.example.revgame2.Player;
 import com.example.revgame2.Relief;
@@ -26,13 +27,14 @@ public class Hex extends Entity{
     public float screenX,screenY;
     public float scaleKoef;
     public Rect rect;
-    public HashMap<Player,Integer> reputation = new HashMap<>();
+    private HashMap<Fraction,Double> reputation = new HashMap<>();
     public static HashMap<Player,Paint> reputationPaints = new HashMap<>();
     public static int SIZE_X;
     public static int SIZE_Y;
 
     public static ArrayList<Hex> moveDotHexList=new ArrayList<>();
     public static ArrayList<Hex> attackDotHexList=new ArrayList<>();
+    private Path hexPath= new Path();
     //private static Hex targetHex;
     public Relief relief;
 
@@ -50,6 +52,7 @@ public class Hex extends Entity{
         this.relief=relief;
         hexes.add(this);
         if (paint==null) paint = new Paint();
+
     }
 
 
@@ -73,9 +76,29 @@ public class Hex extends Entity{
         canvas.drawBitmap(TextureManager.getInstance().getMoveDotTexture(),null, new Rect((int) (screenX+SIZE_X*scaleKoef*0.3), (int) (screenY+SIZE_Y*scaleKoef*0.3),
                 (int) (screenX+SIZE_X*scaleKoef*0.7), (int) (screenY+SIZE_Y*scaleKoef*0.7)),paint);    }
     public void drawReputation(Canvas canvas) {
+        if (Game.getInstance().showReputationFraction==null) Game.getInstance().showReputationFraction = Game.getInstance().humanPlayer.fraction;
         if (relief==Relief.WATER)
             return;
-        for (Player p: Game.getInstance().players){
+        //Game.getInstance().showReputationFraction= Fraction.RED;
+        hexPath.reset();
+        for (int i = 0;i<6;i++) {
+            double angle = Math.toRadians((i * 60 + 90));
+
+            float xt = (float) (x+SIZE_X/2 + SIZE_Y/2 * Math.cos(angle));
+            float yt = (float) (y+SIZE_Y/2 + SIZE_Y/2 * Math.sin(angle));
+            float[] tempCoord = Game.getInstance().getScreenCoordinates(xt,yt);
+            xt=tempCoord[0];
+            yt=tempCoord[1];
+            if (i == 0) {
+                hexPath.moveTo(xt, yt);
+            } else {
+                hexPath.lineTo(xt, yt);
+            }
+        }
+        hexPath.close();
+
+        canvas.drawPath(hexPath,ConstantManager.paintRepMap.get(getReputation(Game.getInstance().showReputationFraction)));
+        /*for (Player p: Game.getInstance().players){
             switch (p.fraction){
                 case RED:
                     canvas.drawLine(screenX+15*scaleKoef,
@@ -125,7 +148,7 @@ public class Hex extends Entity{
                             reputationPaints.get(p));     //a=0.5SizeY *0.05     a*cos(30)     a*sin(30)
                     break;
             }
-        }
+        }*/
     }
     public void drawBuilding(Canvas canvas){
         if (building!=null)
@@ -256,7 +279,7 @@ public class Hex extends Entity{
         for (Hex h:hexes) {
             if (h.relief!=Relief.WATER) {
                 for (Player player : Game.getInstance().players) {
-                    h.reputation.put(player, random.nextInt(6));
+                    h.reputation.put(player.fraction, (double) random.nextInt(6));
                 }
             }
         }
@@ -287,12 +310,17 @@ public class Hex extends Entity{
             reputationPaints.put(player,p);
         }
     }
-    public void spawnSquad(Squad newSquad){
-        if (newSquad.player.getMoney() >= newSquad.cost && squad==null){
+    public boolean spawnSquad(Squad newSquad){
+        if (newSquad.player.getMoney() >= newSquad.cost && squad==null && getReputation(newSquad.player.fraction) >= ConstantManager.SPAWN_SOLDIER_REP_LIMIT &&
+                city.squadDrafted<ConstantManager.squadCityLimitMap.get(city.level)){
             squad=newSquad;
+            squad.player.addSquad(squad);
             newSquad.player.spendMoney(ConstantManager.SPAWN_SOLDIER_COST);
+            city.squadDrafted++;
+            return true;
         }
 
+        return false;
     }
     public void buildRoad(Player player){
         if ((relief==Relief.MOUNTAIN || relief==Relief.SWAMP) && building==null){
@@ -309,6 +337,7 @@ public class Hex extends Entity{
             if (player.getResources()>= building.cost) {
                 if (squad != null && squad.player == player && squad.speedLost>0) {
                     setBuilding(building);
+                    Building.buildings.add(building);
                     player.spendResurces(building.cost);
                     squad.speedLost--;
                 }
@@ -370,4 +399,12 @@ public class Hex extends Entity{
     }
 
     public City getCity() {return city;}
+    public int getReputation(Fraction fr){
+        return reputation.get(fr).intValue();
+    }
+    public void addReputation(Fraction fr, double d){
+        reputation.put(fr,reputation.getOrDefault(fr,0d)+d);
+        if (reputation.get(fr)>5) reputation.put(fr,5d);
+        if (reputation.get(fr)<0) reputation.put(fr,0d);
+    }
 }

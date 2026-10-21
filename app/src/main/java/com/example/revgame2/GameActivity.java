@@ -2,6 +2,7 @@ package com.example.revgame2;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -55,13 +56,20 @@ public class GameActivity extends AppCompatActivity {
         });
         binding.showReputationButton.setOnClickListener(v -> {
             game.showReputationFlag=!game.showReputationFlag;
+            binding.reputationFractionView.setVisibility(game.showReputationFlag?View.VISIBLE:View.GONE);
             binding.gameView.invalidate();
         });
+        binding.redRepButton.setOnClickListener(v -> {Game.getInstance().showReputationFraction=Fraction.RED;binding.gameView.invalidate();});
+        binding.blueRepButton.setOnClickListener(v -> {Game.getInstance().showReputationFraction=Fraction.BLUE;binding.gameView.invalidate();});
+        binding.blackRepButton.setOnClickListener(v -> {Game.getInstance().showReputationFraction=Fraction.BLACK;binding.gameView.invalidate();});
+        binding.whiteRepButton.setOnClickListener(v -> {Game.getInstance().showReputationFraction=Fraction.WHITE;binding.gameView.invalidate();});
+        binding.greenRepButton.setOnClickListener(v -> {Game.getInstance().showReputationFraction=Fraction.GREEN;binding.gameView.invalidate();});
+        binding.yellowRepButton.setOnClickListener(v -> {Game.getInstance().showReputationFraction=Fraction.YELLOW;binding.gameView.invalidate();});
+        binding.yellowRepButton.setOnClickListener(v -> {Game.getInstance().showReputationFraction=Fraction.YELLOW;binding.gameView.invalidate();});
+
         binding.spawnSoldierButton.setOnClickListener(v -> {
             if (Entity.selectedEntity != null && Entity.selectedEntity instanceof Hex){
-                if (((Hex) Entity.selectedEntity).getSquad()==null){
-                    ((Hex) Entity.selectedEntity).spawnSquad(new Soldier((Hex) Entity.selectedEntity,game.humanPlayer));
-                }
+                ((Hex) Entity.selectedEntity).spawnSquad(new Soldier((Hex) Entity.selectedEntity,game.humanPlayer));
             }
             Entity.unselect();
             game.updateUI();

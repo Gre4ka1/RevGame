@@ -28,7 +28,7 @@ public class Squad extends Unit{
     public Squad(Hex hex, Player player, int cost, boolean moveAfterDefeatSquadFlag, Bitmap selectedTexture, Bitmap noSelectedTexture) {
         super(hex,selectedTexture,noSelectedTexture);
         this.player=player;
-        player.addSquad(this);
+        //player.addSquad(this);
         //hex.setSquad(this);
         this.cost=cost;
         this.moveAfterDefeatSquadFlag=moveAfterDefeatSquadFlag;
@@ -150,4 +150,7 @@ public class Squad extends Unit{
     public int getMaxHp() {
         return maxHp;
     }
+    public int getDamage()   { return damage; }
+    public int getDefence()  { return defence; }
+    public int getDistance() { return distance; }
 }

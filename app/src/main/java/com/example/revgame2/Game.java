@@ -3,10 +3,14 @@ package com.example.revgame2;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.text.Layout;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.LinearLayout;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
 
+import com.example.revgame2.Entities.Buildings.Building;
 import com.example.revgame2.Entities.City;
 import com.example.revgame2.Entities.Entity;
 import com.example.revgame2.Entities.Hex;
@@ -26,7 +30,8 @@ public class Game {
     private Random random = new Random();
     public float scaleKoef = 1;
     public boolean showReputationFlag = false;
-    private ArrayList<ConstraintLayout> stateLayoutList = new ArrayList<>();
+    public Fraction showReputationFraction;
+    private ArrayList<ViewGroup> stateLayoutList = new ArrayList<>();
     public float globalX=0,globalY=0;
     private Game() {
     }
@@ -97,12 +102,16 @@ public class Game {
 
         Hex tempHex=Hex.hexes.get(random.nextInt(Hex.hexes.size()));
         tempHex.setSquad(new Soldier(tempHex,players.get(0)));
+        tempHex.getSquad().player.addSquad(tempHex.getSquad());
         tempHex=Hex.hexes.get(random.nextInt(Hex.hexes.size()));
         tempHex.setSquad(new Soldier(tempHex,players.get(1)));
+        tempHex.getSquad().player.addSquad(tempHex.getSquad());
         tempHex=Hex.hexes.get(random.nextInt(Hex.hexes.size()));
         tempHex.setSquad(new Soldier(tempHex,players.get(2)));
+        tempHex.getSquad().player.addSquad(tempHex.getSquad());
         tempHex=Hex.hexes.get(random.nextInt(Hex.hexes.size()));
         tempHex.setSquad(new Soldier(tempHex,players.get(2)));
+        tempHex.getSquad().player.addSquad(tempHex.getSquad());
 
 
 
@@ -122,6 +131,13 @@ public class Game {
     }
     public void nextStep(){
         step+=1;
+
+
+        for (Building b: Building.buildings) {
+            b.isWorking=false;
+            b.ownerPlayer=null;
+            b.tryWork();
+        }
 
         botsSteps();
 
@@ -150,6 +166,7 @@ public class Game {
     }
     public void selectState(Entity entity){
         setGoneVisible();
+
         if (entity == null){
             gameActivity.binding.mainState.setVisibility(View.VISIBLE);
             return;
@@ -222,7 +239,7 @@ public class Game {
         }*/
     }
     private void setGoneVisible(){
-        for (ConstraintLayout layout:stateLayoutList) {
+        for (ViewGroup layout:stateLayoutList) {
             layout.setVisibility(View.GONE);
         }
     }

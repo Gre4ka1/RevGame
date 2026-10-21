@@ -1,5 +1,6 @@
 package com.example.revgame2;
 
+import com.example.revgame2.Entities.Hex;
 import com.example.revgame2.Entities.Squad;
 
 import java.util.ArrayList;
@@ -53,6 +54,7 @@ public class Player {
                 break;
         }
     }
+
 
     public void addResurces(int res) {resources+=res;}
     public void addMoney(int mon) {money += mon;}

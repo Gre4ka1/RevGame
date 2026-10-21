@@ -111,6 +111,83 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/reputation_fraction_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        tools:layout_editor_absoluteX="64dp"
+        tools:layout_editor_absoluteY="119dp">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_margin="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent">
+
+            <ImageButton
+                android:id="@+id/red_rep_button"
+                android:layout_width="@dimen/fraction_button_size"
+                android:layout_height="@dimen/fraction_button_size"
+                android:layout_marginVertical="6dp"
+                android:adjustViewBounds="true"
+                android:background="@color/transparent"
+                android:scaleType="centerCrop"
+                android:src="@drawable/red_flag" />
+
+            <ImageButton
+                android:id="@+id/blue_rep_button"
+                android:layout_width="@dimen/fraction_button_size"
+                android:layout_height="@dimen/fraction_button_size"
+                android:layout_marginVertical="6dp"
+                android:adjustViewBounds="true"
+                android:background="@color/transparent"
+                android:scaleType="centerCrop"
+                android:src="@drawable/blue_flag" />
+            <ImageButton
+                android:id="@+id/black_rep_button"
+                android:layout_width="@dimen/fraction_button_size"
+                android:layout_height="@dimen/fraction_button_size"
+                android:layout_marginVertical="6dp"
+                android:adjustViewBounds="true"
+                android:background="@color/transparent"
+                android:scaleType="centerCrop"
+                android:src="@drawable/black_flag" />
+
+            <ImageButton
+                android:id="@+id/white_rep_button"
+                android:layout_width="@dimen/fraction_button_size"
+                android:layout_height="@dimen/fraction_button_size"
+                android:layout_marginVertical="6dp"
+                android:adjustViewBounds="true"
+                android:background="@color/transparent"
+                android:scaleType="centerCrop"
+                android:src="@drawable/white_flag" />
+            <ImageButton
+                android:id="@+id/green_rep_button"
+                android:layout_width="@dimen/fraction_button_size"
+                android:layout_height="@dimen/fraction_button_size"
+                android:layout_marginVertical="6dp"
+                android:adjustViewBounds="true"
+                android:background="@color/transparent"
+                android:scaleType="centerCrop"
+                android:src="@drawable/green_flag" />
+
+            <ImageButton
+                android:id="@+id/yellow_rep_button"
+                android:layout_width="@dimen/fraction_button_size"
+                android:layout_height="@dimen/fraction_button_size"
+                android:layout_marginVertical="6dp"
+                android:adjustViewBounds="true"
+                android:background="@color/transparent"
+                android:scaleType="centerCrop"
+                android:src="@drawable/yellow_flag" />
+
+        </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/squad_selected_state"

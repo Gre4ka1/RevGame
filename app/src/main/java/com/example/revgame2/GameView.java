@@ -17,6 +17,7 @@ import com.example.revgame2.Entities.City;
 import com.example.revgame2.Entities.Hex;
 import com.example.revgame2.Entities.Squad;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 public class GameView extends View{
@@ -24,6 +25,8 @@ public class GameView extends View{
     boolean clickFlag = true;
     private final float SWAP_LIMIT=3;
     private float[] startTouchRealCoord;
+
+    private int invalidateCounter = 0;
 
 
 
@@ -70,11 +73,20 @@ public class GameView extends View{
         for (Hex h:Hex.moveDotHexList){
             h.drawMoveDot(canvas);
         }
+        drawDebug(canvas);
+    }
+    public void drawDebug(Canvas canvas){
+        ArrayList<Player> players = Game.getInstance().players;
+        Paint p = new Paint();
+        p.setTextSize(24);
+        canvas.drawText("Red m: "+players.get(0).getMoney()+" r: "+players.get(0).getResources(),500,100,p);
+        canvas.drawText("Blue m: "+players.get(1).getMoney()+" r: "+players.get(1).getResources(),500,140,p);
+        canvas.drawText("Yellow m: "+players.get(2).getMoney()+" r: "+players.get(2).getResources(),500,180,p);
     }
     /*@Override
     public boolean onTouch(View view, MotionEvent motionEvent) {
         if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
-            performClick(); // Вызов обязателен!
+            performClick(); // Вызов обязателен
         }
         Hex.getClickedHex(motionEvent.getX(),motionEvent.getY()).onClick();
         return false;
@@ -180,5 +192,10 @@ public class GameView extends View{
         return null;
     }
 
-
+    @Override
+    public void invalidate() {
+        super.invalidate();
+        invalidateCounter++;
+        System.out.println(invalidateCounter+" invalidate");
+    }
 }

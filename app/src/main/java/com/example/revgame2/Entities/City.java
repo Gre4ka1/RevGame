@@ -7,6 +7,7 @@ import com.example.revgame2.TextureManager;
 
 public class City extends Unit{
     public int level;
+    public int squadDrafted = 0;
     public float[] screenCoords;
 
     public City(Hex hex, int level) {
