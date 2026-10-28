@@ -17,8 +17,10 @@ import com.example.revgame2.Entities.Hex;
 import com.example.revgame2.Entities.Soldier;
 import com.example.revgame2.Entities.Squad;
 
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.Timer;
 
 public class Game {
     public GameActivity gameActivity;
@@ -28,6 +30,7 @@ public class Game {
     public static int step=0;
     private static Game instance;
     private Random random = new Random();
+    public long lastStepLength = 0;
     public float scaleKoef = 1;
     public boolean showReputationFlag = false;
     public Fraction showReputationFraction;
@@ -100,16 +103,16 @@ public class Game {
         Soldier.addTexturesForPlayer(players.get(1),soldierBlueTexture);
         Soldier.addTexturesForPlayer(players.get(2),soldierYellowTexture);
 
-        Hex tempHex=Hex.hexes.get(random.nextInt(Hex.hexes.size()));
+        Hex tempHex=getFreeHex();
         tempHex.setSquad(new Soldier(tempHex,players.get(0)));
         tempHex.getSquad().player.addSquad(tempHex.getSquad());
-        tempHex=Hex.hexes.get(random.nextInt(Hex.hexes.size()));
+        tempHex=getFreeHex();
         tempHex.setSquad(new Soldier(tempHex,players.get(1)));
         tempHex.getSquad().player.addSquad(tempHex.getSquad());
-        tempHex=Hex.hexes.get(random.nextInt(Hex.hexes.size()));
+        tempHex=getFreeHex();
         tempHex.setSquad(new Soldier(tempHex,players.get(2)));
         tempHex.getSquad().player.addSquad(tempHex.getSquad());
-        tempHex=Hex.hexes.get(random.nextInt(Hex.hexes.size()));
+        tempHex=getFreeHex();
         tempHex.setSquad(new Soldier(tempHex,players.get(2)));
         tempHex.getSquad().player.addSquad(tempHex.getSquad());
 
@@ -157,12 +160,14 @@ public class Game {
     }
 
     private void botsSteps(){
+        lastStepLength = System.currentTimeMillis();
         for (Player p:players) {
             if (p.ai!=null){
                 p.ai.step();
             }
         }
         updateUI();
+        lastStepLength = System.currentTimeMillis() - lastStepLength;
     }
     public void selectState(Entity entity){
         setGoneVisible();
@@ -266,6 +271,12 @@ public class Game {
         gameActivity.binding.moneyCounter.setText(humanPlayer.getMoney()+"");
         gameActivity.binding.resourceCounter.setText(humanPlayer.getResources()+"");
     }
-
+    public Hex getFreeHex(){
+        Hex h = Hex.hexes.get(random.nextInt(Hex.hexes.size()-1));
+        while (h.getSquad()!=null || h.relief==Relief.WATER){
+            h=Hex.hexes.get(random.nextInt(Hex.hexes.size()-1));
+        }
+        return h;
+    }
 
 }

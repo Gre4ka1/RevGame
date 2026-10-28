@@ -79,9 +79,12 @@ public class GameView extends View{
         ArrayList<Player> players = Game.getInstance().players;
         Paint p = new Paint();
         p.setTextSize(24);
-        canvas.drawText("Red m: "+players.get(0).getMoney()+" r: "+players.get(0).getResources(),500,100,p);
-        canvas.drawText("Blue m: "+players.get(1).getMoney()+" r: "+players.get(1).getResources(),500,140,p);
-        canvas.drawText("Yellow m: "+players.get(2).getMoney()+" r: "+players.get(2).getResources(),500,180,p);
+
+        canvas.drawText("Red m: "+players.get(0).getMoney()+" r: "+players.get(0).getResources(),450,100,p);
+        canvas.drawText("Blue m: "+players.get(1).getMoney()+" r: "+players.get(1).getResources()+" t: "+players.get(1).ai.lastStepLength,450,140,p);
+        canvas.drawText("Yellow m: "+players.get(2).getMoney()+" r: "+players.get(2).getResources()+" t: "+players.get(2).ai.lastStepLength,450,180,p);
+        canvas.drawText("Step "+ Game.getInstance().lastStepLength,450,220,p);
+
     }
     /*@Override
     public boolean onTouch(View view, MotionEvent motionEvent) {

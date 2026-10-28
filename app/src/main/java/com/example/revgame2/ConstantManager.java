@@ -3,6 +3,8 @@ package com.example.revgame2;
 import android.graphics.Paint;
 
 import com.example.revgame2.Entities.Buildings.Farm;
+import com.example.revgame2.Entities.Soldier;
+import com.example.revgame2.Entities.Squad;
 
 import java.util.HashMap;
 
@@ -28,6 +30,7 @@ public class ConstantManager {
     public final static int SQUAD_3_CITY_LIMIT = 5;
 
     public static HashMap<Integer,Integer> squadCityLimitMap = new HashMap<>();
+    public static HashMap<Class,Integer> squadCostMap = new HashMap<>();
 
 
     public final static int REMOVE_FOREST_PRIZE = 1;
@@ -59,6 +62,7 @@ public class ConstantManager {
         squadCityLimitMap.put(1,SQUAD_1_CITY_LIMIT);
         squadCityLimitMap.put(2,SQUAD_2_CITY_LIMIT);
         squadCityLimitMap.put(3,SQUAD_3_CITY_LIMIT);
+        squadCostMap.put(Soldier.class,SPAWN_SOLDIER_COST);
         paintRep0.setARGB(150,254,20,27);
         paintRep1.setARGB(150,253,78,50);
         paintRep2.setARGB(150,254,122,67);
