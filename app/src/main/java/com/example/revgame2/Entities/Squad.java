@@ -16,7 +16,7 @@ public class Squad extends Unit{
     protected int hp;
     public int speed;
     protected int damage;
-    protected int defence;
+    protected double defence;
     protected int distance;
     public int speedLost=speed;
     public Player player;
@@ -110,8 +110,8 @@ public class Squad extends Unit{
         Hex.attackDotHexList.clear();
 
         if (speedLost>0){
-            if (!squad.takeDamage(getAttackDamage(damage,squad.defence,(float)(hp)/maxHp))){
-                takeDamage(getDefenceDamage(defence, squad.defence, (float)(squad.hp)/squad.maxHp));
+            if (!squad.takeDamage(getAttackDamage(damage,squad.getDefence(),(float)(hp)/maxHp))){
+                takeDamage(getDefenceDamage(getDefence(), squad.getDefence(), (float)(squad.hp)/squad.maxHp));
                 speedLost=0;
             } else {
                 speedLost-=1;
@@ -136,10 +136,10 @@ public class Squad extends Unit{
         if (Entity.selectedEntity==this)
             Entity.selectedEntity=null;
     }
-    public static int getAttackDamage(int damage,int defenceDefender, float hpRatioAttacker){
+    public static int getAttackDamage(int damage,double defenceDefender, float hpRatioAttacker){
         return Math.round((float)(5*(damage-0.5*defenceDefender)*(2*hpRatioAttacker-hpRatioAttacker*hpRatioAttacker)));
     }
-    public static int getDefenceDamage(int defenceAttacker,int defenceDefender, float hpRatioDefender){
+    public static int getDefenceDamage(double defenceAttacker,double defenceDefender, float hpRatioDefender){
         return Math.round((float)(1.2*(defenceDefender*defenceDefender*defenceDefender/(defenceAttacker+1))*(2*hpRatioDefender-hpRatioDefender*hpRatioDefender)));
     }
 
@@ -151,6 +151,6 @@ public class Squad extends Unit{
         return maxHp;
     }
     public int getDamage()   { return damage; }
-    public int getDefence()  { return defence; }
+    public double getDefence()  { return defence+hex.getDefence(player.fraction); }
     public int getDistance() { return distance; }
 }

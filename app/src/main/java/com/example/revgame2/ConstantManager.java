@@ -4,14 +4,11 @@ import android.graphics.Paint;
 
 import com.example.revgame2.Entities.Buildings.Farm;
 import com.example.revgame2.Entities.Soldier;
-import com.example.revgame2.Entities.Squad;
 
 import java.util.HashMap;
 
 public class ConstantManager {
     public final static double PLAYER_INFLUENCE_TO_WORK_LIMIT = 13;
-    public final static double BUILD_FARM_REP_LIMIT = 12;
-
     public final static double INFLUENCE_FARM_BONUS_DIST0 = 0.75;
     public final static double INFLUENCE_FARM_BONUS_DIST1 = 0.34;
     public final static double INFLUENCE_BAD_BUILDINGS_LOST_DIST0 = 0.34;
@@ -24,7 +21,7 @@ public class ConstantManager {
     public final static int FORT_COST = 3;
     public final static int MINE_COST = 2;
     public final static int SPAWN_SOLDIER_COST = 1;
-    public static final int SPAWN_SOLDIER_REP_LIMIT = 3;
+    public static final int LOYALITY_REPUTATION_LIMIT = 3;
     public final static int SQUAD_1_CITY_LIMIT = 2;
     public final static int SQUAD_2_CITY_LIMIT = 3;
     public final static int SQUAD_3_CITY_LIMIT = 5;

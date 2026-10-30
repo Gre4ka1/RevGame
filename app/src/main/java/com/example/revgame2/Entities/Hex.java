@@ -8,6 +8,7 @@ import android.graphics.Rect;
 
 import com.example.revgame2.ConstantManager;
 import com.example.revgame2.Entities.Buildings.Building;
+import com.example.revgame2.Entities.Buildings.Fort;
 import com.example.revgame2.Entities.Buildings.Road;
 import com.example.revgame2.Fraction;
 import com.example.revgame2.Game;
@@ -311,7 +312,7 @@ public class Hex extends Entity{
         }
     }
     public boolean spawnSquad(Squad newSquad){
-        if (newSquad.player.getMoney() >= newSquad.cost && squad==null && getReputation(newSquad.player.fraction) >= ConstantManager.SPAWN_SOLDIER_REP_LIMIT &&
+        if (newSquad.player.getMoney() >= newSquad.cost && squad==null && getReputation(newSquad.player.fraction) >= ConstantManager.LOYALITY_REPUTATION_LIMIT &&
                 city.squadDrafted<ConstantManager.squadCityLimitMap.get(city.level)){
             squad=newSquad;
             squad.player.addSquad(squad);
@@ -406,5 +407,11 @@ public class Hex extends Entity{
         reputation.put(fr,reputation.getOrDefault(fr,0d)+d);
         if (reputation.get(fr)>5) reputation.put(fr,5d);
         if (reputation.get(fr)<0) reputation.put(fr,0d);
+    }
+    public double getDefence(Fraction fr){
+        if (building != null && building instanceof Fort && reputation.get(fr)>=ConstantManager.LOYALITY_REPUTATION_LIMIT) return 2;
+        if (relief == Relief.MOUNTAIN) return 1;
+        if (relief == Relief.FOREST) return 0.5;
+        return 0;
     }
 }
