@@ -41,6 +41,7 @@ public class TextureManager {
 
     public HashMap<Relief,Bitmap> hexTextureMap = new HashMap<>();
     public HashMap<Relief,Bitmap> hexSTextureMap = new HashMap<>();
+    public HashMap<Integer,Bitmap> trenchTextureMap = new HashMap<>();
 
     private TextureManager() {}
 
@@ -145,6 +146,14 @@ public class TextureManager {
         hexSTextureMap.put(Relief.MOUNTAIN,mountainHexSTexture);
         hexSTextureMap.put(Relief.SWAMP,swampHexSTexture);
         hexSTextureMap.put(Relief.WATER,waterHexSTexture);
+
+        trenchTextureMap.put(-1,Bitmap.createScaledBitmap(BitmapFactory.decodeResource(context.getResources(),R.drawable.circle_trench_hex),(int) (Hex.SIZE_X), (int) (Hex.SIZE_Y),true));
+        trenchTextureMap.put(0,Bitmap.createScaledBitmap(BitmapFactory.decodeResource(context.getResources(),R.drawable.trench_0_hex),(int) (Hex.SIZE_X), (int) (Hex.SIZE_Y),true));
+        trenchTextureMap.put(60,Bitmap.createScaledBitmap(BitmapFactory.decodeResource(context.getResources(),R.drawable.trench_60_hex),(int) (Hex.SIZE_X), (int) (Hex.SIZE_Y),true));
+        trenchTextureMap.put(120,Bitmap.createScaledBitmap(BitmapFactory.decodeResource(context.getResources(),R.drawable.trench_120_hex),(int) (Hex.SIZE_X), (int) (Hex.SIZE_Y),true));
+        trenchTextureMap.put(180,Bitmap.createScaledBitmap(BitmapFactory.decodeResource(context.getResources(),R.drawable.trench_180_hex),(int) (Hex.SIZE_X), (int) (Hex.SIZE_Y),true));
+        trenchTextureMap.put(240,Bitmap.createScaledBitmap(BitmapFactory.decodeResource(context.getResources(),R.drawable.trench_240_hex),(int) (Hex.SIZE_X), (int) (Hex.SIZE_Y),true));
+        trenchTextureMap.put(300,Bitmap.createScaledBitmap(BitmapFactory.decodeResource(context.getResources(),R.drawable.trench_300_hex),(int) (Hex.SIZE_X), (int) (Hex.SIZE_Y),true));
     }
     public Bitmap getHexTexture(Relief relief){
         return hexTextureMap.get(relief);

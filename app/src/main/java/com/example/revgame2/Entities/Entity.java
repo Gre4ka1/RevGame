@@ -33,6 +33,8 @@ public class Entity {
         Game.getInstance().selectState(this);
     }
     public static void unselect(){
+        Hex.moveDotHexList.clear();
+        Hex.attackDotHexList.clear();
         if (selectedEntity!=null)
             selectedEntity.texture=selectedEntity.noSelectedTexture;
         selectedEntity=null;

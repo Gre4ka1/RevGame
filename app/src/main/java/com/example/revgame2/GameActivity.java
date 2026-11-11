@@ -12,6 +12,8 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.example.revgame2.Entities.Buildings.Fort;
 import com.example.revgame2.Entities.Buildings.Mine;
+import com.example.revgame2.Entities.Buildings.Trench;
+import com.example.revgame2.Entities.City;
 import com.example.revgame2.Entities.Entity;
 import com.example.revgame2.Entities.Buildings.Factory;
 import com.example.revgame2.Entities.Buildings.Farm;
@@ -19,6 +21,7 @@ import com.example.revgame2.Entities.Buildings.Hangar;
 import com.example.revgame2.Entities.Hex;
 import com.example.revgame2.Entities.Buildings.Sawmill;
 import com.example.revgame2.Entities.Soldier;
+import com.example.revgame2.Entities.Squad;
 import com.example.revgame2.databinding.ActivityGameBinding;
 
 import java.util.Random;
@@ -153,9 +156,22 @@ public class GameActivity extends AppCompatActivity {
             Entity.unselect();
             game.updateUI();
             binding.gameView.invalidate();
-
         });
-
+        binding.upgradeCityButton.setOnClickListener(v -> {
+            if (Entity.selectedEntity instanceof Hex)
+                ((Hex) Entity.selectedEntity).getCity().tryUpgrade(game.humanPlayer);
+            Entity.unselect();
+            game.updateUI();
+            binding.gameView.invalidate();
+        });
+        binding.fortifyButton.setOnClickListener(v -> {
+            if (Entity.selectedEntity instanceof Squad){
+                ((Squad) Entity.selectedEntity).hex.buildBuilding(new Trench(((Squad) Entity.selectedEntity).hex),game.humanPlayer);
+            }
+            Entity.unselect();
+            game.updateUI();
+            binding.gameView.invalidate();
+        });
     }
 
 

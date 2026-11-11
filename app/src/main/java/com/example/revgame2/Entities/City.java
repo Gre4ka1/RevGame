@@ -2,7 +2,9 @@ package com.example.revgame2.Entities;
 
 import android.graphics.Canvas;
 
+import com.example.revgame2.ConstantManager;
 import com.example.revgame2.Game;
+import com.example.revgame2.Player;
 import com.example.revgame2.TextureManager;
 
 public class City extends Unit{
@@ -36,6 +38,20 @@ public class City extends Unit{
                 canvas.drawBitmap(TextureManager.getInstance().getCity3Texture(), null, hex.rect, paint);
             }
         }
+    }
+    public void tryUpgrade(Player player){
+        if (level==3) return;
+        if (player.getResources()>= (level==1?ConstantManager.CITY_UPGRADE_TO_2_RES_COST:ConstantManager.CITY_UPGRADE_TO_3_RES_COST)
+         && player.getMoney()>=(level==1?ConstantManager.CITY_UPGRADE_TO_2_MON_COST:ConstantManager.CITY_UPGRADE_TO_3_MON_COST)
+         && hex.getReputation(player.fraction)>=ConstantManager.LOYALITY_REPUTATION_LIMIT){
+            upgrade(player);
+        }
+
+    }
+    private void upgrade(Player player){
+        player.spendResurces((level==1?ConstantManager.CITY_UPGRADE_TO_2_RES_COST:ConstantManager.CITY_UPGRADE_TO_3_RES_COST));
+        player.spendMoney((level==1?ConstantManager.CITY_UPGRADE_TO_2_MON_COST:ConstantManager.CITY_UPGRADE_TO_3_MON_COST));
+        level++;
     }
 
 }

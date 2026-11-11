@@ -20,7 +20,13 @@ public class ConstantManager {
     public final static int ROAD_COST = 1;
     public final static int FORT_COST = 3;
     public final static int MINE_COST = 2;
+    public final static int TRENCH_COST = 1;
     public final static int SPAWN_SOLDIER_COST = 1;
+    public final static int CITY_UPGRADE_TO_2_RES_COST = 2;
+    public final static int CITY_UPGRADE_TO_2_MON_COST = 1;
+    public final static int CITY_UPGRADE_TO_3_RES_COST = 4;
+    public final static int CITY_UPGRADE_TO_3_MON_COST = 2;
+
     public static final int LOYALITY_REPUTATION_LIMIT = 3;
     public final static int SQUAD_1_CITY_LIMIT = 2;
     public final static int SQUAD_2_CITY_LIMIT = 3;

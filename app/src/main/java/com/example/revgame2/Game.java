@@ -33,9 +33,12 @@ public class Game {
     public long lastStepLength = 0;
     public float scaleKoef = 1;
     public boolean showReputationFlag = false;
+
     public Fraction showReputationFraction;
     private ArrayList<ViewGroup> stateLayoutList = new ArrayList<>();
     public float globalX=0,globalY=0;
+    public static final int HEXES_IN_LINE=12;
+    public static int numberOflines;
     private Game() {
     }
     public static Game getInstance() {
@@ -51,11 +54,14 @@ public class Game {
 
         Hex.SIZE_X=width/6;
         Hex.SIZE_Y= (int) (Hex.SIZE_X/1.732*2);
+        Hex.R=Hex.SIZE_Y/2;
         TextureManager.getInstance().init(context);
         //Hex.setTextures(hex4,hex2,moveDot2);
 
         double stepX = Hex.SIZE_X/2;
         double stepY = Math.sqrt((Hex.SIZE_Y/2)*(Hex.SIZE_Y/2)-(Hex.SIZE_X/2)*(Hex.SIZE_X/2))+Hex.SIZE_Y/2;
+        Hex.stepY = stepY;
+
 
         for (int i = 0; i < 200; i++) {
             if ((i/12)%2==0){
@@ -75,6 +81,7 @@ public class Game {
 
             }
         }
+        numberOflines=(int)(1f*Hex.hexes.size()/HEXES_IN_LINE + 0.99);
 
         Player playerBlue = new Player(Fraction.BLUE);
         Player playerRed = new Player(Fraction.RED);
@@ -176,7 +183,16 @@ public class Game {
             gameActivity.binding.mainState.setVisibility(View.VISIBLE);
             return;
         } if (entity instanceof Squad) {
-            gameActivity.binding.squadSelectedState.setVisibility(View.VISIBLE);
+            if (((Squad) entity).player == humanPlayer){
+                gameActivity.binding.squadSelectedState.setVisibility(View.VISIBLE);
+                gameActivity.binding.fortifyButton.setVisibility(View.VISIBLE);
+                if (((Squad) entity).hex.relief!=Relief.FIELD || ((Squad) entity).hex.getCity()!=null){
+                    gameActivity.binding.fortifyButton.setVisibility(View.GONE);
+                }
+            }
+            else {
+
+            }
             return;
         } if (entity instanceof Hex){
             Hex h = (Hex) entity;

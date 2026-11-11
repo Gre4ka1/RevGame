@@ -1,15 +1,18 @@
 package com.example.revgame2.Entities;
 
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Rect;
+import android.util.Size;
 
 import com.example.revgame2.ConstantManager;
 import com.example.revgame2.Entities.Buildings.Building;
 import com.example.revgame2.Entities.Buildings.Fort;
 import com.example.revgame2.Entities.Buildings.Road;
+import com.example.revgame2.Entities.Buildings.Trench;
 import com.example.revgame2.Fraction;
 import com.example.revgame2.Game;
 import com.example.revgame2.Player;
@@ -24,14 +27,19 @@ import java.util.Random;
 public class Hex extends Entity{
     public static ArrayList<Hex> hexes = new ArrayList<>();
     private float x,y;
+    private int xQ,yQ,zQ;
     public float globalX,globalY;
     public float screenX,screenY;
     public float scaleKoef;
     public Rect rect;
+    public ArrayList<Bitmap> trenchTextureList = new ArrayList<>();
+    public static double stepY;
+
     private HashMap<Fraction,Double> reputation = new HashMap<>();
     public static HashMap<Player,Paint> reputationPaints = new HashMap<>();
     public static int SIZE_X;
-    public static int SIZE_Y;
+    public static int SIZE_Y; // double??
+    public static int R;
 
     public static ArrayList<Hex> moveDotHexList=new ArrayList<>();
     public static ArrayList<Hex> attackDotHexList=new ArrayList<>();
@@ -50,16 +58,47 @@ public class Hex extends Entity{
         super(TextureManager.getInstance().getHexSTexture(relief), TextureManager.getInstance().getHexTexture(relief));
         this.x = x;
         this.y = y;
+        int[] temp = getCubeCoords(x,y);
+        this.xQ=temp[0];
+        this.yQ=temp[1];
+        this.zQ=temp[2];
         this.relief=relief;
         hexes.add(this);
         if (paint==null) paint = new Paint();
 
     }
+    private static int[] getCubeCoords(float x, float y){
+        int[] r = new int[3];
+        x=x-SIZE_X/2f;
+        y=y-SIZE_Y/2f;
+
+        double xqd = (Math.sqrt(3)*x - y)/(3*R);
+        double yqd = (2*y)/(3*R);
+        double zqd = -xqd - yqd;
+
+        int xq = (int) Math.round(xqd);
+        int yq = (int) Math.round(yqd);
+        int zq = (int) Math.round(zqd);
+
+        if (Math.abs(xq-xqd)>Math.abs(yq-yqd) && Math.abs(xq-xqd)>Math.abs(zq-zqd)) xq=-yq-zq;
+        else if (Math.abs(yq-yqd)>Math.abs(xq-xqd) && Math.abs(yq-yqd)>Math.abs(zq-zqd)) yq=-xq-zq;
+        else if (Math.abs(zq-zqd)>Math.abs(yq-yqd) && Math.abs(zq-zqd)>Math.abs(xq-xqd)) zq=-yq-xq;
+
+        r[0]=xq;
+        r[1]=yq;
+        r[2]=zq;
+
+        return r;
+    }
+    private static double[] getDekartCoords(float xQ, float yQ) {
+        double[] r = new double[2];
+        r[0] = Math.sqrt(3)*R*(xQ+yQ/2);
+        r[1] = 1.5*R*yQ;
+        return r;
+    }
 
 
     public void draw(Canvas canvas){
-        //globalX=Game.getInstance().globalX;
-        //globalY=Game.getInstance().globalY;
         float[] screenCoord = Game.getInstance().getScreenCoordinates(x,y);
         screenX = screenCoord[0];
         screenY=screenCoord[1];
@@ -99,67 +138,39 @@ public class Hex extends Entity{
         hexPath.close();
 
         canvas.drawPath(hexPath,ConstantManager.paintRepMap.get(getReputation(Game.getInstance().showReputationFraction)));
-        /*for (Player p: Game.getInstance().players){
-            switch (p.fraction){
-                case RED:
-                    canvas.drawLine(screenX+15*scaleKoef,
-                            (float) (screenY+SIZE_Y*scaleKoef*(0.5-0.042*reputation.get(p))),
-                            screenX+15*scaleKoef,
-                            (float) (screenY+SIZE_Y*scaleKoef*(0.5+0.042*reputation.get(p))),
-                            reputationPaints.get(p));
-                    break;
-                case BLUE:
-                    canvas.drawLine(
-                            screenX+SIZE_X*scaleKoef-15*scaleKoef,
-                            (float) (screenY+SIZE_Y*scaleKoef*(0.5-0.042*reputation.get(p))),
-                            screenX+SIZE_X*scaleKoef-15*scaleKoef,
-                            (float) (screenY+SIZE_Y*scaleKoef*(0.5+0.042*reputation.get(p))),
-                            reputationPaints.get(p));
-                    break;
-                case YELLOW:
-                    canvas.drawLine(
-                            (float) (screenX+SIZE_X*scaleKoef*0.75 - 0.866*SIZE_Y*scaleKoef*0.042*reputation.get(p) -7.5*scaleKoef),
-                            (float) (screenY+SIZE_Y*scaleKoef*0.875 + 0.5*SIZE_Y*scaleKoef*0.042*reputation.get(p) - 13*scaleKoef),
-                            (float) (screenX+SIZE_X*scaleKoef*0.75 + 0.866*SIZE_Y*scaleKoef*0.042*reputation.get(p)-7.5*scaleKoef),
-                            (float) (screenY+SIZE_Y*scaleKoef*0.875 - 0.5*SIZE_Y*scaleKoef*0.042*reputation.get(p) -13*scaleKoef),
-                            reputationPaints.get(p));     //a=0.5SizeY *0.05     a*cos(30)     a*sin(30)
-                    break;
-                case GREEN:
-                    canvas.drawLine(
-                            (float) (screenX+SIZE_X*scaleKoef*0.25 - 0.866*SIZE_Y*scaleKoef*0.042*reputation.get(p) + 7.5*scaleKoef),
-                            (float) (screenY+SIZE_Y*scaleKoef*0.125 + 0.5*SIZE_Y*scaleKoef*0.042*reputation.get(p) + 13*scaleKoef),
-                            (float) (screenX+SIZE_X*scaleKoef*0.25 + 0.866*SIZE_Y*scaleKoef*0.042*reputation.get(p)+ 7.5*scaleKoef),
-                            (float) (screenY+SIZE_Y*scaleKoef*0.125 - 0.5*SIZE_Y*scaleKoef*0.042*reputation.get(p) + 13*scaleKoef),
-                            reputationPaints.get(p));     //a=0.5SizeY *0.05     a*cos(30)     a*sin(30)
-                    break;
-                case BLACK:
-                    canvas.drawLine(
-                            (float) (screenX+SIZE_X*scaleKoef*0.25 - 0.866*SIZE_Y*scaleKoef*0.042*reputation.get(p) + 7.5*scaleKoef),
-                            (float) (screenY+SIZE_Y*scaleKoef*0.875 - 0.5*SIZE_Y*scaleKoef*0.042*reputation.get(p) - 13*scaleKoef),
-                            (float) (screenX+SIZE_X*scaleKoef*0.25 + 0.866*SIZE_Y*scaleKoef*0.042*reputation.get(p) + 7.5*scaleKoef),
-                            (float) (screenY+SIZE_Y*scaleKoef*0.875 + 0.5*SIZE_Y*scaleKoef*0.042*reputation.get(p) - 13*scaleKoef),
-                            reputationPaints.get(p));     //a=0.5SizeY *0.05     a*cos(30)     a*sin(30)
-                    break;
-                case WHITE:
-                    canvas.drawLine(
-                            (float) (screenX+SIZE_X*scaleKoef*0.75 - 0.866*SIZE_Y*scaleKoef*0.042*reputation.get(p) - 7.5*scaleKoef),
-                            (float) (screenY+SIZE_Y*scaleKoef*0.125 - 0.5*SIZE_Y*scaleKoef*0.042*reputation.get(p) + 13*scaleKoef),
-                            (float) (screenX+SIZE_X*scaleKoef*0.75 + 0.866*SIZE_Y*scaleKoef*0.042*reputation.get(p)- 7.5*scaleKoef),
-                            (float) (screenY+SIZE_Y*scaleKoef*0.125 + 0.5*SIZE_Y*scaleKoef*0.042*reputation.get(p) + 13*scaleKoef),
-                            reputationPaints.get(p));     //a=0.5SizeY *0.05     a*cos(30)     a*sin(30)
-                    break;
-            }
-        }*/
     }
     public void drawBuilding(Canvas canvas){
-        if (building!=null)
-            canvas.drawBitmap(building.texture,null,rect,paint);
+        if (building!=null) {
+            building.draw(canvas);
+        }
     }
 
+
     public static Hex getClickedHex(float cx, float cy){
-        float minDist=1000;
+        int[] cubeCoords = getCubeCoords(cx,cy);
+        double[] coords = getDekartCoords(cubeCoords[0],cubeCoords[1]);
+        coords[0]+=SIZE_X/2d;
+        coords[1]+=SIZE_Y/2d;
+        if (coords[0]<=0 || coords[0]>= SIZE_X*Game.HEXES_IN_LINE ||
+        coords[1]<=0 || coords[1] >= SIZE_Y+stepY*(Game.numberOflines-1)){
+            return null;
+        }
+
+        int lineNumber = (int)(coords[1] / stepY);
+        if (lineNumber%2==0){
+            int numberInLine = (int)(coords[0]/SIZE_X);
+            if ((int) (lineNumber*Game.HEXES_IN_LINE - lineNumber*0.5 + numberInLine) < hexes.size())
+                return hexes.get((int) (lineNumber*Game.HEXES_IN_LINE - lineNumber*0.5 + numberInLine));
+        } else {
+            int numberInLine = (int)((coords[0]-SIZE_X/2)/SIZE_X);
+            if ((int) (lineNumber*Game.HEXES_IN_LINE - (lineNumber-1)*0.5 + numberInLine) < hexes.size())
+                return hexes.get((int) (lineNumber*Game.HEXES_IN_LINE - (lineNumber-1)*0.5 + numberInLine));
+        }
+        return null;
+
+        /*float minDist=1000;
         Hex minDistHex = hexes.get(0);
-        for (Hex h:hexes) {
+        for (Hex h:hexes) { //пиздец
             if (Math.hypot(h.x+SIZE_X/2 - cx,h.y+SIZE_Y/2 - cy)<minDist){
                 minDist= (float) Math.hypot(h.x+SIZE_X/2 - cx,h.y+SIZE_Y/2 - cy);
                 minDistHex=h;
@@ -169,7 +180,7 @@ public class Hex extends Entity{
             //if (minDistHex.relief==Relief.WATER) return null;
             return minDistHex;
         }
-        return null;
+        return null;*/
     }
     public void onTouch(){
         if (Hex.moveDotHexList.contains(this)){
@@ -247,15 +258,20 @@ public class Hex extends Entity{
     }
 
     public ArrayList<Hex> getNearestHexes(){
-        ArrayList<Hex> temp = new ArrayList<>();
-        temp.add(getClickedHex(x+globalX,y+globalY));
-        temp.add(getClickedHex(x+globalX+SIZE_X,y+globalY));
-        temp.add(getClickedHex(x+globalX+SIZE_X*1.5f,y+globalY+SIZE_Y*0.5f));
-        temp.add(getClickedHex(x+globalX+SIZE_X,y+globalY+SIZE_Y));
-        temp.add(getClickedHex(x+globalX,y+globalY+SIZE_Y));
-        temp.add(getClickedHex(x+globalX-SIZE_X*0.5f,y+globalY+SIZE_Y*0.5f));
+        ArrayList<Hex> temp = getAllNearestHexes();
+
         while (temp.contains(null))
             temp.remove(null);
+        return temp;
+    }
+    public ArrayList<Hex> getAllNearestHexes(){
+        ArrayList<Hex> temp = new ArrayList<>();
+        temp.add(getClickedHex(x+globalX+SIZE_X*1.5f,y+globalY+SIZE_Y*0.5f));
+        temp.add(getClickedHex(x+globalX+SIZE_X,y+globalY));
+        temp.add(getClickedHex(x+globalX,y+globalY));
+        temp.add(getClickedHex(x+globalX-SIZE_X*0.5f,y+globalY+SIZE_Y*0.5f));
+        temp.add(getClickedHex(x+globalX,y+globalY+SIZE_Y));
+        temp.add(getClickedHex(x+globalX+SIZE_X,y+globalY+SIZE_Y));
         return temp;
     }
     public ArrayList<Hex> get36NearestHexes(){
@@ -341,6 +357,10 @@ public class Hex extends Entity{
                     Building.buildings.add(building);
                     player.spendResurces(building.cost);
                     squad.speedLost--;
+                    if (building instanceof Trench){
+                        updateNeighborTexture();
+                        for (Hex h:getNearestHexes()) h.updateNeighborTexture();
+                    }
                 }
             }
         }
@@ -362,6 +382,19 @@ public class Hex extends Entity{
             building=null;
             player.addResurces(ConstantManager.REMOVE_BUILDING_PRIZE);
             squad.speedLost--;
+        }
+    }
+    public void updateNeighborTexture(){
+        if (building instanceof Trench){
+            int i = 0;
+            for (Hex h: getAllNearestHexes()){
+                if (h != null) {
+                    if (h.building instanceof Trench)
+                        trenchTextureList.add(TextureManager.getInstance().trenchTextureMap.get(i * 60));
+                }
+                i++;
+            }
+
         }
     }
 
@@ -409,7 +442,8 @@ public class Hex extends Entity{
         if (reputation.get(fr)<0) reputation.put(fr,0d);
     }
     public double getDefence(Fraction fr){
-        if (building != null && building instanceof Fort && reputation.get(fr)>=ConstantManager.LOYALITY_REPUTATION_LIMIT) return 2;
+        if (building instanceof Trench) return 1;
+        if (building instanceof Fort && reputation.get(fr)>=ConstantManager.LOYALITY_REPUTATION_LIMIT) return (relief==Relief.MOUNTAIN?3:2);
         if (relief == Relief.MOUNTAIN) return 1;
         if (relief == Relief.FOREST) return 0.5;
         return 0;
