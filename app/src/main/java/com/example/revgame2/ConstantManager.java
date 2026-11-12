@@ -31,6 +31,7 @@ public class ConstantManager {
     public final static int SQUAD_1_CITY_LIMIT = 2;
     public final static int SQUAD_2_CITY_LIMIT = 3;
     public final static int SQUAD_3_CITY_LIMIT = 5;
+    public static final double DISCLOSED_SQUAD_DEFENCE_KOEF = 0.5;
 
     public static HashMap<Integer,Integer> squadCityLimitMap = new HashMap<>();
     public static HashMap<Class,Integer> squadCostMap = new HashMap<>();

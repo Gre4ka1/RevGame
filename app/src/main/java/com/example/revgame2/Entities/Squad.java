@@ -24,6 +24,9 @@ public class Squad extends Unit{
     public float[] screenCoords;
     public float scaleKoef;
     public boolean moveAfterDefeatSquadFlag;
+    public boolean hidden = false;
+    public double tempDefenceKoef = 1;
+    public int tempDefenceTurn = -1;
 
     public Squad(Hex hex, Player player, int cost, boolean moveAfterDefeatSquadFlag, Bitmap selectedTexture, Bitmap noSelectedTexture) {
         super(hex,selectedTexture,noSelectedTexture);
@@ -43,6 +46,7 @@ public class Squad extends Unit{
             targetHex.setSquad(this);
             hex=targetHex;
             speedLost-=1;
+            hidden=false;
             if (targetHex.relief==Relief.MOUNTAIN || targetHex.relief==Relief.SWAMP)
                 if (!(targetHex.getBuilding() instanceof Road))
                     speedLost = 0;
@@ -72,17 +76,15 @@ public class Squad extends Unit{
         ArrayList<Hex> nearestHexes = hex.getNearestHexes();
         if (speedLost>0) {
             for (Hex h : nearestHexes) {
-                if (h.getSquad()!=null){
+                if (h.getSquad()!=null && !h.getSquad().hidden){
                     if (h.getSquad().player!=player)
                         Hex.attackDotHexList.add(h);
                     continue;
                 }
-                if (h == null || h.relief==Relief.WATER)
+                if (h.relief==Relief.WATER)
                     continue;
 
-                //h.drawMoveDot(canvas);
                 Hex.moveDotHexList.add(h);
-
             }
         }
 
@@ -93,12 +95,16 @@ public class Squad extends Unit{
     public void draw(Canvas canvas) {
         screenCoords= Game.getInstance().getScreenCoordinates(hex.getX(),hex.getY());
         scaleKoef = Game.getInstance().scaleKoef;
+        if (hidden) {
+            if (player != Game.getInstance().humanPlayer) return;
+            paint.setAlpha(150);
+        }
         if (Entity.selectedEntity == this) {
             canvas.drawBitmap(texture, null, new Rect((int) (screenCoords[0]+hex.SIZE_X*scaleKoef*0.15), (int) (screenCoords[1]+hex.SIZE_Y*scaleKoef*0.15), (int) (screenCoords[0]+hex.SIZE_X*scaleKoef*0.85), (int) (screenCoords[1]+hex.SIZE_Y*scaleKoef*0.85)), paint);
-
         }
         else
             canvas.drawBitmap(texture, null, new Rect((int) (screenCoords[0]+hex.SIZE_X*scaleKoef*0.2), (int) (screenCoords[1]+hex.SIZE_Y*scaleKoef*0.2), (int) (screenCoords[0]+hex.SIZE_X*scaleKoef*0.8), (int) (screenCoords[1]+hex.SIZE_Y*scaleKoef*0.8)),paint);
+        paint.setAlpha(255);
         drawHP(canvas);
     }
     private void drawHP(Canvas canvas){
@@ -111,7 +117,7 @@ public class Squad extends Unit{
 
         if (speedLost>0){
             if (!squad.takeDamage(getAttackDamage(damage,squad.getDefence(),(float)(hp)/maxHp))){
-                takeDamage(getDefenceDamage(getDefence(), squad.getDefence(), (float)(squad.hp)/squad.maxHp));
+                if (!hidden) takeDamage(getDefenceDamage(getDefence(), squad.getDefence(), (float)(squad.hp)/squad.maxHp));
                 speedLost=0;
             } else {
                 speedLost-=1;
@@ -119,7 +125,14 @@ public class Squad extends Unit{
                     move(squad.hex);
                 }
             }
-
+            hidden=false;
+        }
+    }
+    public void tryHide(){
+        if (speedLost>=1) {
+            speedLost--;
+            hidden = true;
+            speedLost=0;
         }
     }
     public boolean takeDamage(int damage){
@@ -151,6 +164,9 @@ public class Squad extends Unit{
         return maxHp;
     }
     public int getDamage()   { return damage; }
-    public double getDefence()  { return defence+hex.getDefence(player.fraction); }
+    public double getDefence()  {
+        if (Game.step==tempDefenceTurn) return defence*tempDefenceKoef+hex.getDefence(player.fraction);
+        return defence+hex.getDefence(player.fraction);
+    }
     public int getDistance() { return distance; }
 }

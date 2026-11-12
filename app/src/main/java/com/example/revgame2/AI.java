@@ -148,14 +148,14 @@ public class AI {
     }
     public static double getHexDanger1(Hex hex, Player player){
         double danger=0;
-        if (hex.getSquad()!=null){
+        if (hex.getSquad()!=null && !hex.getSquad().hidden){
             if (hex.getSquad().player==player) danger-=0.75*hex.getSquad().getHp();
             else danger+=hex.getSquad().getHp();
         }
 
         ArrayList<Hex> hexes = hex.getNearestHexes();
         for (Hex h:hexes){
-            if (h.getSquad()!=null){
+            if (h.getSquad()!=null && !hex.getSquad().hidden){
                 if (h.getSquad().player==player) danger-=0.75*h.getSquad().getHp()*ConstantManager.DANGER1_SCORE_KOEF;
                 else danger+=h.getSquad().getHp()*ConstantManager.DANGER1_SCORE_KOEF;
             }
@@ -187,7 +187,10 @@ public class AI {
         int enemyPlayers = 0;
         for (Player p : Game.getInstance().players) {
             if (p == player) continue;
-            ArrayList<Squad> sq = p.squads;
+            ArrayList<Squad> sq = (ArrayList<Squad>) p.squads.clone();
+            for (int i =sq.size()-1;i>=0;i--) {
+                if (sq.get(i).hidden) sq.remove(i);
+            }
             if (sq.isEmpty()) continue;
             t.enemies.addAll(sq);
             enemyPowerSum += totalPower(sq);
@@ -247,6 +250,7 @@ public class AI {
                     for (Hex n : x.getNearestHexes()) {
                         if (n.relief == Relief.WATER || reach.contains(n)) continue;
                         Squad occ = n.getSquad();
+                        if (occ==null || occ.hidden) occ=null;
                         if (occ != null && occ.player != e.player) continue;   // чужой отряд — преграда
                         reach.add(n);
                         next.add(n);
@@ -328,6 +332,7 @@ public class AI {
         double c = 1.0;
         if (isRough(h) && !hasRoad(h)) c = ROUGH_PATH_COST;
         Squad occ = h.getSquad();
+        if (occ==null || occ.hidden) occ=null;
         if (h != goal && occ != null) c += (occ.player == player) ? BLOCKED_BY_OWN_COST : BLOCKED_BY_ENEMY_COST;
         return c;
     }
@@ -426,7 +431,6 @@ public class AI {
             boolean changed = after != here || s.speedLost != pointsBefore || s.getHp() != myHpBefore
                     || (victim != null && victim.getHp() != victimHpBefore);
             if (!changed) break;    // действие не удалось — не зацикливаемся
-            Toast.makeText(Game.getInstance().gameActivity.getApplicationContext(), here+" "+(System.currentTimeMillis()-time), Toast.LENGTH_SHORT).show();
         }
 
         if (couldAct) updateStuckState(s, start, plan, attacked);
@@ -538,7 +542,7 @@ public class AI {
             }
             Collections.shuffle(next, random);
             for (Hex n : next) {
-                if (n.getSquad() == null && !t.claimedExplore.contains(n)
+                if ((n.getSquad() == null || n.getSquad().hidden) && !t.claimedExplore.contains(n)
                         && n.getReputation(t.myFraction) <= EXPLORE_REP_MAX) return n;
             }
             if (!next.isEmpty()) lastLayer = next;
@@ -575,6 +579,7 @@ public class AI {
             if (n.relief == Relief.WATER) continue;
             double normN = (getHexScore(n) - min) / range - 0.5;
             Squad occ = n.getSquad();
+            if (occ==null || occ.hidden) occ = null;
             double noise = random.nextDouble() * 0.01 * C;
 
             if (occ == null) {

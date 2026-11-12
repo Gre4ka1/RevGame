@@ -43,7 +43,7 @@ public class GameActivity extends AppCompatActivity {
             return insets;
         });
         Intent intent = getIntent();
-        //System.out.println(intent.getStringExtra("xol"));
+
         int screenWidth = getIntent().getIntExtra("width",1);
         int screenHeight = getIntent().getIntExtra("height",1);
 
@@ -170,6 +170,13 @@ public class GameActivity extends AppCompatActivity {
             }
             Entity.unselect();
             game.updateUI();
+            binding.gameView.invalidate();
+        });
+        binding.hideButton.setOnClickListener(v -> {
+            if (Entity.selectedEntity instanceof Squad){
+                ((Squad) Entity.selectedEntity).tryHide();
+            }
+            Entity.unselect();
             binding.gameView.invalidate();
         });
     }

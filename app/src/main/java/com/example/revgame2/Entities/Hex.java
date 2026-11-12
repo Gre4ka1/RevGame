@@ -185,9 +185,17 @@ public class Hex extends Entity{
     public void onTouch(){
         if (Hex.moveDotHexList.contains(this)){
             if (Entity.selectedEntity instanceof Squad){
-                ((Squad) Entity.selectedEntity).move(this);
-                if (((Squad) Entity.selectedEntity).speedLost==0){
-                    unselect();
+                if (squad!=null && squad.hidden){
+                    squad.hidden=false;
+                    squad.tempDefenceKoef=ConstantManager.DISCLOSED_SQUAD_DEFENCE_KOEF;
+                    squad.tempDefenceTurn = Game.step;
+                    Game.getInstance().gameActivity.binding.gameView.invalidate();
+                }
+                else {
+                    ((Squad) Entity.selectedEntity).move(this);
+                    if (((Squad) Entity.selectedEntity).speedLost == 0) {
+                        unselect();
+                    }
                 }
             } else
                 System.err.println("Hex.onTouch() Try to move to this hex. Selected entity is not squad.");
@@ -394,7 +402,6 @@ public class Hex extends Entity{
                 }
                 i++;
             }
-
         }
     }
 
