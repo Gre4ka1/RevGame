@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 
+import com.example.revgame2.ConstantManager;
 import com.example.revgame2.Entities.Buildings.Road;
 import com.example.revgame2.Game;
 import com.example.revgame2.Player;
@@ -73,21 +74,22 @@ public class Squad extends Unit{
     @Override
     public void select() {
         super.select();
-        ArrayList<Hex> nearestHexes = hex.getNearestHexes();
-        if (speedLost>0) {
-            for (Hex h : nearestHexes) {
-                if (h.getSquad()!=null && !h.getSquad().hidden){
-                    if (h.getSquad().player!=player)
-                        Hex.attackDotHexList.add(h);
-                    continue;
-                }
-                if (h.relief==Relief.WATER)
-                    continue;
+        if (player==Game.getInstance().humanPlayer) {
+            ArrayList<Hex> nearestHexes = hex.getNearestHexes();
+            if (speedLost > 0) {
+                for (Hex h : nearestHexes) {
+                    if (h.getSquad() != null && !h.getSquad().hidden) {
+                        if (h.getSquad().player != player)
+                            Hex.attackDotHexList.add(h);
+                        continue;
+                    }
+                    if (h.relief == Relief.WATER)
+                        continue;
 
-                Hex.moveDotHexList.add(h);
+                    Hex.moveDotHexList.add(h);
+                }
             }
         }
-
     }
 
 
@@ -146,6 +148,7 @@ public class Squad extends Unit{
     public void die(){
         hex.setSquad(null);
         player.squads.remove(this);
+        hex.addReputation(player.fraction,-ConstantManager.INFLUENCE_SQUAD_DIE_LOST);
         if (Entity.selectedEntity==this)
             Entity.selectedEntity=null;
     }

@@ -116,7 +116,8 @@
         android:layout_height="match_parent"
         android:visibility="gone"
         tools:layout_editor_absoluteX="64dp"
-        tools:layout_editor_absoluteY="119dp">
+        tools:layout_editor_absoluteY="119dp"
+        android:layout_marginBottom="@dimen/button_size">
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -200,21 +201,13 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent">
             <ImageButton
-                android:layout_width="@dimen/button_size"
-                android:layout_height="@dimen/button_size"
+                style="@style/image_button_style"
                 android:id="@+id/fortify_button"
-                android:src="@drawable/fortify_icon"
-                android:scaleType="centerCrop"
-                android:adjustViewBounds="true"
-                android:background="@color/transparent" />
+                android:src="@drawable/fortify_icon" />
             <ImageButton
-                android:layout_width="@dimen/button_size"
-                android:layout_height="@dimen/button_size"
+                style="@style/image_button_style"
                 android:id="@+id/hide_button"
-                android:src="@drawable/invisible_icon"
-                android:scaleType="centerCrop"
-                android:adjustViewBounds="true"
-                android:background="@color/transparent" />
+                android:src="@drawable/invisible_icon" />
 
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
@@ -231,21 +224,13 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent">
             <ImageButton
-                android:layout_width="@dimen/button_size"
-                android:layout_height="@dimen/button_size"
+                style="@style/image_button_style"
                 android:id="@+id/spawn_soldier_button"
-                android:src="@drawable/soldier_icon"
-                android:scaleType="centerCrop"
-                android:adjustViewBounds="true"
-                android:background="@color/transparent" />
+                android:src="@drawable/soldier_icon" />
             <ImageButton
-                android:layout_width="@dimen/button_size"
-                android:layout_height="@dimen/button_size"
+                style="@style/image_button_style"
                 android:id="@+id/upgrade_city_button"
-                android:src="@drawable/upgrade_city_icon"
-                android:scaleType="centerCrop"
-                android:adjustViewBounds="true"
-                android:background="@color/transparent" />
+                android:src="@drawable/upgrade_city_icon"/>
 
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
@@ -254,55 +239,38 @@
         android:layout_height="match_parent"
         android:id="@+id/field_selected_state"
         android:visibility="gone">
-        <LinearLayout
+        <HorizontalScrollView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent">
-            <!--<ImageButton
-                android:layout_width="@dimen/button_size"
-                android:layout_height="@dimen/button_size"
-                android:id="@+id/remove_in_field_button"
-                android:src="@drawable/remove_icon"
-                android:scaleType="centerCrop"
-                android:adjustViewBounds="true"
-                android:background="@color/transparent" />-->
-            <ImageButton
-                android:layout_width="@dimen/button_size"
-                android:layout_height="@dimen/button_size"
-                android:id="@+id/build_farm_button"
-                android:src="@drawable/farm_icon"
-                android:scaleType="centerCrop"
-                android:adjustViewBounds="true"
-                android:background="@color/transparent" />
-            <ImageButton
-                android:layout_width="@dimen/button_size"
-                android:layout_height="@dimen/button_size"
-                android:id="@+id/build_factory_button"
-                android:src="@drawable/factory_icon"
-                android:scaleType="centerCrop"
-                android:adjustViewBounds="true"
-                android:background="@color/transparent" />
-            <ImageButton
-                android:layout_width="@dimen/button_size"
-                android:layout_height="@dimen/button_size"
-                android:id="@+id/build_hangar_button"
-                android:src="@drawable/hangar_icon"
-                android:scaleType="centerCrop"
-                android:adjustViewBounds="true"
-                android:background="@color/transparent" />
-            <ImageButton
-                android:layout_width="@dimen/button_size"
-                android:layout_height="@dimen/button_size"
-                android:id="@+id/build_fort_button"
-                android:src="@drawable/fort_icon"
-                android:scaleType="centerCrop"
-                android:adjustViewBounds="true"
-                android:background="@color/transparent" />
-
-        </LinearLayout>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <ImageButton
+                    style="@style/image_button_style"
+                    android:id="@+id/build_farm_button"
+                    android:src="@drawable/farm_icon"/>
+                <ImageButton
+                    style="@style/image_button_style"
+                    android:id="@+id/build_factory_button"
+                    android:src="@drawable/factory_icon"/>
+                <ImageButton
+                    style="@style/image_button_style"
+                    android:id="@+id/build_hangar_button"
+                    android:src="@drawable/hangar_icon"/>
+                <ImageButton
+                    style="@style/image_button_style"
+                    android:id="@+id/build_fort_button"
+                    android:src="@drawable/fort_icon"/>
+                <ImageButton
+                    style="@style/image_button_style"
+                    android:id="@+id/build_publishing_office_button"
+                    android:src="@drawable/publishing_office_icon"/>
+            </LinearLayout>
+        </HorizontalScrollView>
     </androidx.constraintlayout.widget.ConstraintLayout>
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -317,21 +285,13 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent">
             <ImageButton
-                android:layout_width="@dimen/button_size"
-                android:layout_height="@dimen/button_size"
+                style="@style/image_button_style"
                 android:id="@+id/remove_forest_button"
-                android:src="@drawable/axe_icon"
-                android:scaleType="centerCrop"
-                android:adjustViewBounds="true"
-                android:background="@color/transparent" />
+                android:src="@drawable/axe_icon"/>
             <ImageButton
-                android:layout_width="@dimen/button_size"
-                android:layout_height="@dimen/button_size"
+                style="@style/image_button_style"
                 android:id="@+id/build_sawmill_button"
-                android:src="@drawable/sawmill_icon"
-                android:scaleType="centerCrop"
-                android:adjustViewBounds="true"
-                android:background="@color/transparent" />
+                android:src="@drawable/sawmill_icon"/>
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -346,38 +306,18 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent">
-            <!--<ImageButton
-                android:layout_width="@dimen/button_size"
-                android:layout_height="@dimen/button_size"
-                android:id="@+id/remove_in_mountain_button"
-                android:src="@drawable/remove_icon"
-                android:scaleType="centerCrop"
-                android:adjustViewBounds="true"
-                android:background="@color/transparent" />-->
             <ImageButton
-                android:layout_width="@dimen/button_size"
-                android:layout_height="@dimen/button_size"
+                style="@style/image_button_style"
                 android:id="@+id/build_mountain_road_button"
-                android:src="@drawable/road_icon"
-                android:scaleType="centerCrop"
-                android:adjustViewBounds="true"
-                android:background="@color/transparent" />
+                android:src="@drawable/road_icon"/>
             <ImageButton
-                android:layout_width="@dimen/button_size"
-                android:layout_height="@dimen/button_size"
+                style="@style/image_button_style"
                 android:id="@+id/build_mountain_fort_button"
-                android:src="@drawable/fort_icon"
-                android:scaleType="centerCrop"
-                android:adjustViewBounds="true"
-                android:background="@color/transparent" />
+                android:src="@drawable/fort_icon"/>
             <ImageButton
-                android:layout_width="@dimen/button_size"
-                android:layout_height="@dimen/button_size"
+                style="@style/image_button_style"
                 android:id="@+id/build_mine_button"
-                android:src="@drawable/mine_icon"
-                android:scaleType="centerCrop"
-                android:adjustViewBounds="true"
-                android:background="@color/transparent" />
+                android:src="@drawable/mine_icon"/>
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -392,22 +332,10 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent">
-            <!--<ImageButton
-                android:layout_width="@dimen/button_size"
-                android:layout_height="@dimen/button_size"
-                android:id="@+id/remove_in_swamp_button"
-                android:src="@drawable/remove_icon"
-                android:scaleType="centerCrop"
-                android:adjustViewBounds="true"
-                android:background="@color/transparent" />-->
             <ImageButton
-                android:layout_width="@dimen/button_size"
-                android:layout_height="@dimen/button_size"
+                style="@style/image_button_style"
                 android:id="@+id/build_swamp_road_button"
-                android:src="@drawable/road_icon"
-                android:scaleType="centerCrop"
-                android:adjustViewBounds="true"
-                android:background="@color/transparent" />
+                android:src="@drawable/road_icon"/>
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -422,14 +350,6 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent">
-            <ImageButton
-                android:layout_width="@dimen/button_size"
-                android:layout_height="@dimen/button_size"
-                android:id="@+id/remove_in_water_button"
-                android:src="@drawable/remove_icon"
-                android:scaleType="centerCrop"
-                android:adjustViewBounds="true"
-                android:background="@color/transparent" />
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -445,14 +365,56 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent">
             <ImageButton
-                android:layout_width="@dimen/button_size"
-                android:layout_height="@dimen/button_size"
+                style="@style/image_button_style"
                 android:id="@+id/remove_building_button"
-                android:src="@drawable/remove_icon"
-                android:scaleType="centerCrop"
-                android:adjustViewBounds="true"
-                android:background="@color/transparent" />
+                android:src="@drawable/remove_icon"/>
         </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/select_fraction_state"
+        android:visibility="gone">
+        <HorizontalScrollView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent">
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <ImageButton
+                    style="@style/image_button_style"
+                    android:id="@+id/select_red_button"
+                    android:src="@drawable/red_button"/>
+                <ImageButton
+                    style="@style/image_button_style"
+                    android:id="@+id/select_blue_button"
+                    android:src="@drawable/blue_button"/>
+                <ImageButton
+                    style="@style/image_button_style"
+                    android:id="@+id/select_black_button"
+                    android:src="@drawable/black_button"/>
+                <ImageButton
+                    style="@style/image_button_style"
+                    android:id="@+id/select_white_button"
+                    android:src="@drawable/white_button"/>
+                <ImageButton
+                    style="@style/image_button_style"
+                    android:id="@+id/select_green_button"
+                    android:src="@drawable/green_button"/>
+                <ImageButton
+                    style="@style/image_button_style"
+                    android:id="@+id/select_yellow_button"
+                    android:src="@drawable/yellow_button"/>
+                <ImageButton
+                    style="@style/image_button_style"
+                    android:id="@+id/remove_publishing_office_button"
+                    android:src="@drawable/remove_icon"/>
+            </LinearLayout>
+        </HorizontalScrollView>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

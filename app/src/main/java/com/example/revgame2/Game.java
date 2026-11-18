@@ -11,6 +11,7 @@ import android.widget.LinearLayout;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.example.revgame2.Entities.Buildings.Building;
+import com.example.revgame2.Entities.Buildings.PublishingOffice;
 import com.example.revgame2.Entities.City;
 import com.example.revgame2.Entities.Entity;
 import com.example.revgame2.Entities.Hex;
@@ -19,6 +20,10 @@ import com.example.revgame2.Entities.Squad;
 
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.IdentityHashMap;
+import java.util.Map;
 import java.util.Random;
 import java.util.Timer;
 
@@ -53,7 +58,7 @@ public class Game {
     public void init(int width,int height, Context context) {
 
         Hex.SIZE_X=width/6;
-        Hex.SIZE_Y= (int) (Hex.SIZE_X/1.732*2);
+        Hex.SIZE_Y= Hex.SIZE_X/Math.sqrt(3)*2;
         Hex.R=Hex.SIZE_Y/2;
         TextureManager.getInstance().init(context);
         //Hex.setTextures(hex4,hex2,moveDot2);
@@ -63,7 +68,7 @@ public class Game {
         Hex.stepY = stepY;
 
 
-        for (int i = 0; i < 200; i++) {
+        for (int i = 0; i < 204; i++) {
             if ((i/12)%2==0){
                 new Hex((float) (i%12*Hex.SIZE_X), (float) (i/12*stepY), Relief.values()[random.nextInt(Relief.values().length)]);
             }
@@ -98,19 +103,42 @@ public class Game {
         humanPlayer=playerRed;
         playerBlue.initAI();
         playerYellow.initAI();
+        playerGreen.initAI();
+        playerBlack.initAI();
+        playerWhite.initAI();
 
 
-        Hex.initReputation();
+        ArrayList<Hex> centersOfFractions = Hex.initReputation();
 
 
         Bitmap soldierRedTexture = BitmapFactory.decodeResource(context.getResources(),R.drawable.soldier_red);
         Bitmap soldierBlueTexture = BitmapFactory.decodeResource(context.getResources(),R.drawable.soldier_blue);
         Bitmap soldierYellowTexture = BitmapFactory.decodeResource(context.getResources(),R.drawable.soldier_yellow);
+        Bitmap soldierGreenTexture = BitmapFactory.decodeResource(context.getResources(),R.drawable.soldier_green);
+        Bitmap soldierBlackTexture = BitmapFactory.decodeResource(context.getResources(),R.drawable.soldier_black);
+        Bitmap soldierWhiteTexture = BitmapFactory.decodeResource(context.getResources(),R.drawable.soldier_white);
         Soldier.addTexturesForPlayer(players.get(0),soldierRedTexture);
         Soldier.addTexturesForPlayer(players.get(1),soldierBlueTexture);
         Soldier.addTexturesForPlayer(players.get(2),soldierYellowTexture);
+        Soldier.addTexturesForPlayer(players.get(3),soldierGreenTexture);
+        Soldier.addTexturesForPlayer(players.get(4),soldierBlackTexture);
+        Soldier.addTexturesForPlayer(players.get(5),soldierWhiteTexture);
 
-        Hex tempHex=getFreeHex();
+        for (Hex h : centersOfFractions) {
+            Player player = playerRed;
+            for (Player p : players) {
+                if (h.getReputation(p.fraction)>=4){
+                    player=p;
+                }
+            }
+
+            h.setSquad(new Soldier(h,player));
+            player.addSquad(h.getSquad());
+        }
+        growRepRegions(centersOfFractions,4,3);
+
+
+        /*Hex tempHex=getFreeHex();
         tempHex.setSquad(new Soldier(tempHex,players.get(0)));
         tempHex.getSquad().player.addSquad(tempHex.getSquad());
         tempHex=getFreeHex();
@@ -121,7 +149,7 @@ public class Game {
         tempHex.getSquad().player.addSquad(tempHex.getSquad());
         tempHex=getFreeHex();
         tempHex.setSquad(new Soldier(tempHex,players.get(2)));
-        tempHex.getSquad().player.addSquad(tempHex.getSquad());
+        tempHex.getSquad().player.addSquad(tempHex.getSquad());*/
 
 
 
@@ -136,8 +164,54 @@ public class Game {
         stateLayoutList.add(gameActivity.binding.fieldSelectedState);
         stateLayoutList.add(gameActivity.binding.mountainSelectedState);
         stateLayoutList.add(gameActivity.binding.buildingHexSelectedState);
+        stateLayoutList.add(gameActivity.binding.selectFractionState);
 
         updateUI();
+    }
+    private void growRepRegions(ArrayList<Hex> centers, int steps, int hexPerStep){
+        HashMap<Hex,Fraction> firstRepMap = new HashMap<>();
+        ArrayList<ArrayList<Hex>> borderArrays = new ArrayList<>();
+        IdentityHashMap<ArrayList<Hex>,Hex> borderToCenterMap = new IdentityHashMap<>();
+        for (Hex center:centers) {
+            HashSet<Hex> borderSet = new HashSet<>();
+            for (Hex h : center.get36NearestHexes()){
+                if (h.relief != Relief.WATER) {
+                    firstRepMap.put(h, center.getPrevailingPlayer().fraction);
+
+                }
+                borderSet.addAll(h.getNearestHexes());
+            }
+            firstRepMap.put(center,center.getPrevailingPlayer().fraction);
+            ArrayList<Hex> borderArr = new ArrayList<>();
+            for (Hex h : borderSet) {
+                if (!firstRepMap.containsKey(h) && h.relief!=Relief.WATER){
+                    borderArr.add(h);
+                }
+            }
+            borderArrays.add(borderArr);
+            borderToCenterMap.put(borderArr,center);
+        }
+        for (int i = 0; i < steps; i++) {
+            for (ArrayList<Hex> borderArr : borderArrays){
+                for (int j = borderArr.size()-1; j >= 0; j--) {
+                    if (firstRepMap.containsKey(borderArr.get(j))){
+                        borderArr.remove(j);
+                    }
+                }
+                for (int j = 0; j < hexPerStep; j++) {
+                    if (!borderArr.isEmpty()){
+                        Hex randomHex = borderArr.get(random.nextInt(borderArr.size()));
+                        firstRepMap.put(randomHex,firstRepMap.get(borderToCenterMap.get(borderArr)));
+                        borderArr.remove(randomHex);
+                        randomHex.addReputation(firstRepMap.get(borderToCenterMap.get(borderArr)),2d);
+                        for (Hex h : randomHex.getNearestHexes()){
+                            if (!firstRepMap.containsKey(h) && !borderArr.contains(h) && h.relief!=Relief.WATER) borderArr.add(h);
+                        }
+                    }
+                }
+            }
+
+        }
     }
     public void nextStep(){
         step+=1;
@@ -211,7 +285,8 @@ public class Game {
 //                    //gameActivity.binding.buildBarracksButton.setVisibility(View.VISIBLE);
 //                    gameActivity.binding.buildHangarButton.setVisibility(View.VISIBLE);
                 } else {
-                    gameActivity.binding.buildingHexSelectedState.setVisibility(View.VISIBLE);
+                    if (h.getBuilding() instanceof PublishingOffice) gameActivity.binding.selectFractionState.setVisibility(View.VISIBLE);
+                    else gameActivity.binding.buildingHexSelectedState.setVisibility(View.VISIBLE);
 //                    gameActivity.binding.removeInFieldButton.setVisibility(View.VISIBLE);
 //                    gameActivity.binding.buildFarmButton.setVisibility(View.GONE);
 //                    gameActivity.binding.buildFactoryButton.setVisibility(View.GONE);

@@ -12,6 +12,7 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.example.revgame2.Entities.Buildings.Fort;
 import com.example.revgame2.Entities.Buildings.Mine;
+import com.example.revgame2.Entities.Buildings.PublishingOffice;
 import com.example.revgame2.Entities.Buildings.Trench;
 import com.example.revgame2.Entities.City;
 import com.example.revgame2.Entities.Entity;
@@ -136,6 +137,13 @@ public class GameActivity extends AppCompatActivity {
             game.updateUI();
             binding.gameView.invalidate();
         });
+        binding.buildPublishingOfficeButton.setOnClickListener(v -> {
+            if (Entity.selectedEntity instanceof Hex)
+                ((Hex) Entity.selectedEntity).buildBuilding(new PublishingOffice((Hex) Entity.selectedEntity),game.humanPlayer);
+            Entity.unselect();
+            game.updateUI();
+            binding.gameView.invalidate();
+        });
         binding.buildMountainFortButton.setOnClickListener(v -> {
             if (Entity.selectedEntity instanceof Hex)
                 ((Hex) Entity.selectedEntity).buildBuilding(new Fort((Hex) Entity.selectedEntity),game.humanPlayer);
@@ -150,13 +158,8 @@ public class GameActivity extends AppCompatActivity {
             game.updateUI();
             binding.gameView.invalidate();
         });
-        binding.removeBuildingButton.setOnClickListener(v -> {
-            if (Entity.selectedEntity instanceof Hex)
-                ((Hex) Entity.selectedEntity).removeBuilding(game.humanPlayer);
-            Entity.unselect();
-            game.updateUI();
-            binding.gameView.invalidate();
-        });
+        binding.removeBuildingButton.setOnClickListener(v -> removeBuilding());
+        binding.removePublishingOfficeButton.setOnClickListener(v -> removeBuilding());
         binding.upgradeCityButton.setOnClickListener(v -> {
             if (Entity.selectedEntity instanceof Hex)
                 ((Hex) Entity.selectedEntity).getCity().tryUpgrade(game.humanPlayer);
@@ -179,8 +182,30 @@ public class GameActivity extends AppCompatActivity {
             Entity.unselect();
             binding.gameView.invalidate();
         });
+        binding.selectRedButton.setOnClickListener(v -> selectFraction(Fraction.RED));
+        binding.selectBlueButton.setOnClickListener(v -> selectFraction(Fraction.BLUE));
+        binding.selectBlackButton.setOnClickListener(v -> selectFraction(Fraction.BLACK));
+        binding.selectWhiteButton.setOnClickListener(v -> selectFraction(Fraction.WHITE));
+        binding.selectGreenButton.setOnClickListener(v -> selectFraction(Fraction.GREEN));
+        binding.selectYellowButton.setOnClickListener(v -> selectFraction(Fraction.YELLOW));
     }
-
+    private void removeBuilding(){
+        if (Entity.selectedEntity instanceof Hex)
+            ((Hex) Entity.selectedEntity).removeBuilding(game.humanPlayer);
+        Entity.unselect();
+        game.updateUI();
+        binding.gameView.invalidate();
+    }
+    private void selectFraction(Fraction fraction){
+        if (Entity.selectedEntity instanceof Hex) {
+            if (((Hex) Entity.selectedEntity).getBuilding() instanceof PublishingOffice) {
+                ((PublishingOffice) ((Hex) Entity.selectedEntity).getBuilding()).setTargetFractionByPlayer(game.humanPlayer,fraction);
+            }
+        }
+        Entity.unselect();
+        game.updateUI();
+        binding.gameView.invalidate();
+    }
 
 
 }

@@ -38,6 +38,7 @@ public class TextureManager {
     private Bitmap sawmillTexture;
     private Bitmap fortTexture;
     private Bitmap mineTexture;
+    private Bitmap publishingOfficeTexture;
 
     public HashMap<Relief,Bitmap> hexTextureMap = new HashMap<>();
     public HashMap<Relief,Bitmap> hexSTextureMap = new HashMap<>();
@@ -54,37 +55,37 @@ public class TextureManager {
 
     public void init(Context context) {
         Bitmap emptyHex = BitmapFactory.decodeResource(context.getResources(),R.drawable.hex);
-        Bitmap emptyHexScaled= Bitmap.createScaledBitmap(emptyHex, Hex.SIZE_X,Hex.SIZE_Y,true);
+        Bitmap emptyHexScaled= Bitmap.createScaledBitmap(emptyHex, Hex.SIZE_X, (int) Hex.SIZE_Y,true);
         emptyHexTexture=emptyHexScaled;
         Bitmap fieldHex = BitmapFactory.decodeResource(context.getResources(),R.drawable.hex_field2);
-        Bitmap fieldHexScaled= Bitmap.createScaledBitmap(fieldHex,Hex.SIZE_X,Hex.SIZE_Y,true);
+        Bitmap fieldHexScaled= Bitmap.createScaledBitmap(fieldHex,Hex.SIZE_X, (int) Hex.SIZE_Y,true);
         fieldHexTexture=fieldHexScaled;
         Bitmap forestHex = BitmapFactory.decodeResource(context.getResources(),R.drawable.hex_forest2);
-        Bitmap forestHexScaled= Bitmap.createScaledBitmap(forestHex,Hex.SIZE_X,Hex.SIZE_Y,true);
+        Bitmap forestHexScaled= Bitmap.createScaledBitmap(forestHex,Hex.SIZE_X, (int) Hex.SIZE_Y,true);
         forestHexTexture=forestHexScaled;
         Bitmap waterHex = BitmapFactory.decodeResource(context.getResources(),R.drawable.hex_water);
-        Bitmap waterHexScaled= Bitmap.createScaledBitmap(waterHex,Hex.SIZE_X,Hex.SIZE_Y,true);
+        Bitmap waterHexScaled= Bitmap.createScaledBitmap(waterHex,Hex.SIZE_X, (int) Hex.SIZE_Y,true);
         waterHexTexture=waterHexScaled;
         Bitmap mountaintHex = BitmapFactory.decodeResource(context.getResources(),R.drawable.hex_mountain2);
-        Bitmap mountainHexScaled= Bitmap.createScaledBitmap(mountaintHex,Hex.SIZE_X,Hex.SIZE_Y,true);
+        Bitmap mountainHexScaled= Bitmap.createScaledBitmap(mountaintHex,Hex.SIZE_X, (int) Hex.SIZE_Y,true);
         mountainHexTexture=mountainHexScaled;
         Bitmap swamptHex = BitmapFactory.decodeResource(context.getResources(),R.drawable.hex_swamp2);
-        Bitmap swampHexScaled= Bitmap.createScaledBitmap(swamptHex,Hex.SIZE_X,Hex.SIZE_Y,true);
+        Bitmap swampHexScaled= Bitmap.createScaledBitmap(swamptHex,Hex.SIZE_X, (int) Hex.SIZE_Y,true);
         swampHexTexture=swampHexScaled;
         Bitmap fieldHexS = BitmapFactory.decodeResource(context.getResources(),R.drawable.hex_field2s);
         Bitmap fieldHexSScaled= Bitmap.createScaledBitmap(fieldHexS, (int) (Hex.SIZE_X), (int) (Hex.SIZE_Y),true);
         fieldHexSTexture=fieldHexSScaled;
         Bitmap forestHexS = BitmapFactory.decodeResource(context.getResources(),R.drawable.hex_forest2s);
-        Bitmap forestHexSScaled= Bitmap.createScaledBitmap(forestHexS,Hex.SIZE_X,Hex.SIZE_Y,true);
+        Bitmap forestHexSScaled= Bitmap.createScaledBitmap(forestHexS,Hex.SIZE_X, (int) Hex.SIZE_Y,true);
         forestHexSTexture=forestHexSScaled;
         Bitmap waterHexS = BitmapFactory.decodeResource(context.getResources(),R.drawable.hex_waters);
-        Bitmap waterHexSScaled= Bitmap.createScaledBitmap(waterHexS,Hex.SIZE_X,Hex.SIZE_Y,true);
+        Bitmap waterHexSScaled= Bitmap.createScaledBitmap(waterHexS,Hex.SIZE_X, (int) Hex.SIZE_Y,true);
         waterHexSTexture=waterHexSScaled;
         Bitmap mountaintHexS = BitmapFactory.decodeResource(context.getResources(),R.drawable.hex_mountain2s);
-        Bitmap mountainHexSScaled= Bitmap.createScaledBitmap(mountaintHexS,Hex.SIZE_X,Hex.SIZE_Y,true);
+        Bitmap mountainHexSScaled= Bitmap.createScaledBitmap(mountaintHexS,Hex.SIZE_X, (int) Hex.SIZE_Y,true);
         mountainHexSTexture=mountainHexSScaled;
         Bitmap swamptHexS = BitmapFactory.decodeResource(context.getResources(),R.drawable.hex_swamp2s);
-        Bitmap swampHexSScaled= Bitmap.createScaledBitmap(swamptHexS,Hex.SIZE_X,Hex.SIZE_Y,true);
+        Bitmap swampHexSScaled= Bitmap.createScaledBitmap(swamptHexS,Hex.SIZE_X, (int) Hex.SIZE_Y,true);
         swampHexSTexture=swampHexSScaled;
         Bitmap moveDot = BitmapFactory.decodeResource(context.getResources(),R.drawable.move_dot);
         Bitmap moveDotScaled= Bitmap.createScaledBitmap(moveDot, (int) (Hex.SIZE_X*0.2), (int) (Hex.SIZE_Y*0.2),true);
@@ -131,7 +132,9 @@ public class TextureManager {
         Bitmap mine = BitmapFactory.decodeResource(context.getResources(),R.drawable.mine_hex);
         Bitmap mineScaled= Bitmap.createScaledBitmap(mine, (int) (Hex.SIZE_X), (int) (Hex.SIZE_Y),true);
         mineTexture=mineScaled;
-
+        Bitmap publishingOffice = BitmapFactory.decodeResource(context.getResources(),R.drawable.publishing_office_hex);
+        Bitmap publishingOfficeScaled= Bitmap.createScaledBitmap(publishingOffice, (int) (Hex.SIZE_X), (int) (Hex.SIZE_Y),true);
+        publishingOfficeTexture=publishingOfficeScaled;
 
 
 
@@ -236,4 +239,5 @@ public class TextureManager {
     }
     public Bitmap getFortTexture() {return fortTexture;}
     public Bitmap getMineTexture() {return mineTexture;}
+    public Bitmap getPublishingOfficeTexture() {return publishingOfficeTexture;}
 }

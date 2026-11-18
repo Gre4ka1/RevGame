@@ -38,8 +38,8 @@ public class Hex extends Entity{
     private HashMap<Fraction,Double> reputation = new HashMap<>();
     public static HashMap<Player,Paint> reputationPaints = new HashMap<>();
     public static int SIZE_X;
-    public static int SIZE_Y; // double??
-    public static int R;
+    public static double SIZE_Y; // double??
+    public static double R;
 
     public static ArrayList<Hex> moveDotHexList=new ArrayList<>();
     public static ArrayList<Hex> attackDotHexList=new ArrayList<>();
@@ -70,7 +70,7 @@ public class Hex extends Entity{
     private static int[] getCubeCoords(float x, float y){
         int[] r = new int[3];
         x=x-SIZE_X/2f;
-        y=y-SIZE_Y/2f;
+        y= (float) (y-SIZE_Y/2f);
 
         double xqd = (Math.sqrt(3)*x - y)/(3*R);
         double yqd = (2*y)/(3*R);
@@ -274,12 +274,12 @@ public class Hex extends Entity{
     }
     public ArrayList<Hex> getAllNearestHexes(){
         ArrayList<Hex> temp = new ArrayList<>();
-        temp.add(getClickedHex(x+globalX+SIZE_X*1.5f,y+globalY+SIZE_Y*0.5f));
+        temp.add(getClickedHex(x+globalX+SIZE_X*1.5f, (float) (y+globalY+SIZE_Y*0.5f)));
         temp.add(getClickedHex(x+globalX+SIZE_X,y+globalY));
         temp.add(getClickedHex(x+globalX,y+globalY));
-        temp.add(getClickedHex(x+globalX-SIZE_X*0.5f,y+globalY+SIZE_Y*0.5f));
-        temp.add(getClickedHex(x+globalX,y+globalY+SIZE_Y));
-        temp.add(getClickedHex(x+globalX+SIZE_X,y+globalY+SIZE_Y));
+        temp.add(getClickedHex(x+globalX-SIZE_X*0.5f, (float) (y+globalY+SIZE_Y*0.5f)));
+        temp.add(getClickedHex(x+globalX, (float) (y+globalY+SIZE_Y)));
+        temp.add(getClickedHex(x+globalX+SIZE_X, (float) (y+globalY+SIZE_Y)));
         return temp;
     }
     public ArrayList<Hex> get36NearestHexes(){
@@ -300,15 +300,37 @@ public class Hex extends Entity{
             return true;
         return false;
     }
-    public static void initReputation(){
+    public static ArrayList<Hex> initReputation(){
+        Game game = Game.getInstance();
         for (Hex h:hexes) {
             if (h.relief!=Relief.WATER) {
-                for (Player player : Game.getInstance().players) {
-                    h.reputation.put(player.fraction, (double) random.nextInt(6));
+                for (Player player : game.players) {
+                    h.reputation.put(player.fraction, (double) random.nextInt(3));
                 }
             }
         }
-        for (Player player:Game.getInstance().players) {
+        ArrayList<Hex> centers = new ArrayList<>();
+        for (int i = 0; i < game.players.size();) {
+            Hex cityHex = game.cities.get(random.nextInt(game.cities.size())).hex;
+            boolean flag = true;
+            for (Fraction fr:cityHex.reputation.keySet())
+                if (cityHex.reputation.get(fr)>=3) flag=false;
+            if (flag){
+                for (Hex h : cityHex.get36NearestHexes()) {
+                    if (h.relief==Relief.WATER) continue;
+                    h.reputation.put(game.players.get(i).fraction,h.reputation.get(game.players.get(i).fraction)+2);
+                }
+                for (Hex h : cityHex.getNearestHexes()){
+                    if (h.relief==Relief.WATER) continue;
+                    h.reputation.put(game.players.get(i).fraction,h.reputation.get(game.players.get(i).fraction)+1);
+                }
+                cityHex.reputation.put(game.players.get(i).fraction,5d);
+                centers.add(cityHex);
+                i++;
+            }
+        }
+
+        for (Player player:game.players) {
             Paint p = new Paint();
             p.setStrokeWidth(10);
             switch (player.fraction){
@@ -334,6 +356,7 @@ public class Hex extends Entity{
             }
             reputationPaints.put(player,p);
         }
+        return centers;
     }
     public boolean spawnSquad(Squad newSquad){
         if (newSquad.player.getMoney() >= newSquad.cost && squad==null && getReputation(newSquad.player.fraction) >= ConstantManager.LOYALITY_REPUTATION_LIMIT &&
@@ -387,8 +410,8 @@ public class Hex extends Entity{
     }
     public void removeBuilding(Player player){
         if (building!=null && squad!=null && squad.player==player){
+            if (!(building instanceof Road || building instanceof Trench)) player.addResurces(ConstantManager.REMOVE_BUILDING_PRIZE);
             building=null;
-            player.addResurces(ConstantManager.REMOVE_BUILDING_PRIZE);
             squad.speedLost--;
         }
     }
@@ -403,6 +426,15 @@ public class Hex extends Entity{
                 i++;
             }
         }
+    }
+    public Player getPrevailingPlayer(){
+        Player maxRepPlayer=Game.getInstance().humanPlayer;
+        for (Player p : Game.getInstance().players){
+            if (reputation.get(p.fraction)>reputation.get(maxRepPlayer.fraction)){
+                maxRepPlayer=p;
+            }
+        }
+        return maxRepPlayer;
     }
 
     public float getX() {

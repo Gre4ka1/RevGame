@@ -11,8 +11,12 @@ public class ConstantManager {
     public final static double PLAYER_INFLUENCE_TO_WORK_LIMIT = 13;
     public final static double INFLUENCE_FARM_BONUS_DIST0 = 0.75;
     public final static double INFLUENCE_FARM_BONUS_DIST1 = 0.34;
+    public final static double INFLUENCE_PUBLISHING_OFFICE_LOST_DIST0 = 1;
+    public final static double INFLUENCE_PUBLISHING_OFFICE_LOST_DIST1 = 0.75;
+    public final static double INFLUENCE_PUBLISHING_OFFICE_LOST_DIST2 = 0.4;
     public final static double INFLUENCE_BAD_BUILDINGS_LOST_DIST0 = 0.34;
     public final static double INFLUENCE_BAD_BUILDINGS_LOST_DIST1 = 0.2;
+    public final static double INFLUENCE_SQUAD_DIE_LOST = 0.34;
     public final static int FARM_COST = 1;
     public final static int FACTORY_COST = 2;
     public final static int SAWMILL_COST = 1;
@@ -20,6 +24,7 @@ public class ConstantManager {
     public final static int ROAD_COST = 1;
     public final static int FORT_COST = 3;
     public final static int MINE_COST = 2;
+    public final static int PUBLISHING_OFFICE_COST = 2;
     public final static int TRENCH_COST = 1;
     public final static int SPAWN_SOLDIER_COST = 1;
     public final static int CITY_UPGRADE_TO_2_RES_COST = 2;
